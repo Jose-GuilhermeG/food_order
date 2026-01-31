@@ -1,7 +1,12 @@
 import pytest
+
 from api.domain.entities import Category, Food, Order, OrderIdentify
 from api.domain.enums import OrderStatus
-from api.domain.exceptions import ValidationException, IdValidationException, EmptyValidationException 
+from api.domain.exceptions import (
+    EmptyValidationException,
+    IdValidationException,
+    ValidationException,
+)
 
 #this tests are made with AI , it will be refactore later
 

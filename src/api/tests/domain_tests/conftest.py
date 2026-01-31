@@ -1,6 +1,8 @@
 import pytest
+
 from api.domain.entities import Category, Food, Order, OrderIdentify
 from api.domain.enums import OrderStatus
+
 
 @pytest.fixture
 def simple_category():

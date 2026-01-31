@@ -1,0 +1,44 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
+    - id: trailing-whitespace
+      files: ^src/api/.*\.py$
+    - id: end-of-file-fixer
+      files: ^src/api/.*\.py$
+    - id: check-yaml
+      files: ^src/api/.*\.ya?ml$
+    - id: check-added-large-files
+      files: ^src/api/.*$
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.14.11
+  hooks:
+    - id: ruff
+      args: [--fix]
+      files: ^src/api/.*\.py$
+      exclude: ^src/api/tests/
+
+- repo: https://github.com/pycqa/isort
+  rev: 5.13.2
+  hooks:
+    - id: isort
+      name: isort (python)
+      args: [--profile, black, --filter-files]
+      files: ^src/api/.*\.py$
+
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.13.0
+  hooks:
+    - id: mypy
+      files: ^src/api/.*\.py$
+      exclude: ^src/api/tests/
+      args: ["--config-file", "mypy.ini"]
+      additional_dependencies:
+        - pydantic
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v5.0.0
+  hooks:
+    - id: debug-statements
+      files: ^src/api/.*\.py$
