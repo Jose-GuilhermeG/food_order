@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#cache
+__pycahe__
+*pyc
+.pytest_cache
