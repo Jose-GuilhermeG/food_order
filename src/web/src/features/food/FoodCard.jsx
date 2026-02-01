@@ -1,10 +1,12 @@
-import { Search, ShoppingCart, Clock, Flame, ChefHat, X, Plus, } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import AddCartButton from '../cart/AddCartButton';
 
-export default function FoodCard({product , add_event }){
+export default function FoodCard({product , on_click ,add_event }){
     return (
         <div
               key={product.id}
-              className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-gray-700 hover:border-red-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-red-500/20 hover:-translate-y-1"
+              onClick={()=>on_click(product)}
+              className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-gray-700 hover:border-red-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-red-500/20 hover:-translate-y-1 cursor-pointer"
             >
               <div className="relative overflow-hidden h-48">
                 <img
@@ -27,17 +29,7 @@ export default function FoodCard({product , add_event }){
                   <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
                     R$ {product.price.toFixed(2)}
                   </div>
-                  <button
-                    className="relative group/btn"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-500 rounded-xl blur opacity-75 group-hover/btn:opacity-100 transition-opacity"></div>
-                    <div 
-                      onClick={()=>add_event(product)}
-                      className="relative bg-gradient-to-r from-red-600 to-orange-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center space-x-2">
-                      <Plus className="w-4 h-4" strokeWidth={3} />
-                      <span>Adicionar</span>
-                    </div>
-                  </button>
+                  <AddCartButton on_click={add_event} />
                 </div>
               </div>
             </div>

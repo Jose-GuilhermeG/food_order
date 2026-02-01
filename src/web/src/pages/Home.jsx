@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Clock, Flame, ChefHat, X, Plus, Minus } from 'lucide-react';
 
 //components
-import FoodGalary from '../../features/food/FoodGalery';
-import Banner from '../../components/banner/Banner';
-import CategoryGalery from '../../features/catgory/CategoryGalery';
-import FloatButton from '../../components/float_button/FloatButton';
-import RightSideBar from '../../components/side_bar/RightSideBar';
-import SimpleSearchInput from '../../components/inputs/SearchInput';
-import BasicModal from '../../components/modal/BasicModal';
+import FoodGalary from '../features/food/FoodGalery';
+import Banner from '../components/banner/Banner';
+import CategoryGalery from '../features/catgory/CategoryGalery';
+import FloatButton from '../components/float_button/FloatButton';
+import RightSideBar from '../components/side_bar/RightSideBar';
+import SimpleSearchInput from '../components/inputs/SearchInput';
+import BasicModal from '../components/modal/BasicModal';
+import FoodDetail from '../features/food/foodDetail';
 
 export default function FoodDeliveryHome() {
   const [products, setProducts] = useState([]);
@@ -18,6 +19,8 @@ export default function FoodDeliveryHome() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isSideBarOpen, setSideBarOpen] = useState(false);
   const [orderNumber, setOrderNumber] = useState(null);
+  const [productDetail , setProductDetail] = useState()
+  const [openProductDetailModal , setOpenProductDetailModal] = useState(false)
 
   useEffect(() => {
         const mockProducts = [
@@ -129,6 +132,11 @@ export default function FoodDeliveryHome() {
     setSideBarOpen(false)
   };
 
+  const open_product_detail = (product)=>{
+    setOpenProductDetailModal(true)
+    setProductDetail(product)
+  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -141,7 +149,7 @@ export default function FoodDeliveryHome() {
           <CategoryGalery categories={categories}/>
         </div>
 
-       <FoodGalary products={filteredProducts} add_event={addToCart} />
+       <FoodGalary products={filteredProducts} add_event={addToCart} on_click={open_product_detail} />
       </div>
 
        <RightSideBar set_open_state={setSideBarOpen} open_state={isSideBarOpen}>
@@ -268,6 +276,9 @@ export default function FoodDeliveryHome() {
       <FloatButton style={{"right" : '5%'  , "bottom" : '5%' , "backgroundColor" : "#101828"}} on_click={()=>setSideBarOpen(true)}>
         <ShoppingCart className="w-6 h-6 text-white" strokeWidth={2} />
       </FloatButton>
+
+      <FoodDetail state={openProductDetailModal} product={productDetail} set_state={setOpenProductDetailModal} />
+
     </div>
   );
 }
