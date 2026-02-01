@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
 from api.application.interfaces.mapping import IMapping
+from api.domain.entities import Food
 
 T = TypeVar("T")
 
@@ -21,17 +22,23 @@ class IRepository(
         pass
 
     @abstractmethod
-    def get_by_id(self , field : str , id : int , exec : bool = True)-> T | None:
+    def get_by_id(self , id : int)-> T | None:
         pass
 
     @abstractmethod
-    def all(self , exec : bool = True)-> list[T]:
+    def all(self) -> list[T]:
         pass
 
     @abstractmethod
-    def limit(self , limit : int , offeset : int ,exec : bool = True) -> list[T]:
+    def limit(self , limit : int , offeset : int) -> list[T]:
         pass
 
     @abstractmethod
     def delete_by_id(self , id : int)->None:
         pass
+
+
+class IFoodRepository(
+    IRepository[Food],
+):
+    pass

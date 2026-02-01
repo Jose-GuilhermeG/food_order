@@ -27,9 +27,11 @@ dist-ssr
 __pycahe__
 *pyc
 .pytest_cache
+.mypy_cache
 
 #env
 venv
 env
 ENV
 VENV
+.env

@@ -48,6 +48,7 @@ class Food:
     __slug: str
     __description: str
     __price: float
+    __photos : list['FoodPhoto']
 
     @property
     def id(self) -> int:
@@ -90,8 +91,53 @@ class Food:
     def price(self, value: float) -> None:
         self.__price = PositiveNumberValidate.validate(value , 'price')
 
+    @property
+    def photos(self)->list['FoodPhoto']:
+        return self.__photos
+
+    @photos.setter
+    def photos(self , value : list['FoodPhoto'])->None:
+        self.__photos = TypeFieldValidation.validate(value , list , 'photos')
+
+    def add_photo(self , value : 'FoodPhoto') -> None:
+        self.__photos.append(value)
+
     def __str__(self) -> str:
         return f"{self.__name} - R${self.__price:.2f}"
+
+class FoodPhoto:
+    __id: int
+    __food_id: int
+    __photo_url: str
+
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @id.setter
+    def id(self, value: int) -> None:
+        self.__id = IdFieldValidation.validate(value)
+
+    @property
+    def food_id(self) -> int:
+        return self.__food_id
+
+    @food_id.setter
+    def food_id(self, value: int) -> None:
+        self.__food_id = IdFieldValidation.validate(value)
+
+    @property
+    def photo_url(self) -> str:
+        return self.__photo_url
+
+    @photo_url.setter
+    def photo_url(self, value: str) -> None:
+        validated = RequiredFieldValidation.validate(value, "photo_url")
+        self.__photo_url = TypeFieldValidation.validate(validated, str, "photo_url")
+
+    def __str__(self) -> str:
+        return f"FoodPhoto {self.__id} -> Food {self.__food_id}: {self.__photo_url}"
+
 
 
 class Order:
