@@ -16,7 +16,7 @@ class BaseFactory(
 
     def __init__(self):
         self._public_attrs = [atrr for atrr in dir(self._model) if not atrr.startswith("__") and not atrr.endswith("__") ]
-        self._private_attrs = [atrr for atrr in self._model.__dict__ if atrr.startswith("__") and not atrr.endswith("__")]
+        self._private_attrs = [atrr for atrr in self._model.__annotations__ if atrr.startswith(f"_{self._model.__name__}__") and not atrr.endswith("__")]
 
     def create(self, **kwargs):
         instance = self._model()
@@ -28,7 +28,8 @@ class BaseFactory(
     def reconstruct(self, **kwargs):
         instance = self._model()
         for atrr in self._private_attrs:
-            setattr(instance , atrr , kwargs.get(atrr))
+            format_attr_name = atrr.replace("__" , "").replace(self._model.__name__ , "").removeprefix('_')
+            setattr(instance , atrr , kwargs.get(format_attr_name))
 
         return instance
 

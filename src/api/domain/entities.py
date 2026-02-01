@@ -36,7 +36,7 @@ class Category:
     @slug.setter
     def slug(self, value: str) -> None:
         validate_value = RequiredFieldValidation.validate(value, "slug")
-        self.__slug = validate_value.lower().replace(" ", "_")
+        self.__slug = validate_value.lower().replace(" ", "-")
 
     def __str__(self) -> str:
         return self.__name
@@ -73,7 +73,7 @@ class Food:
     @slug.setter
     def slug(self, value: str) -> None:
         validate_value = RequiredFieldValidation.validate(value, "slug")
-        self.__slug = validate_value.lower().replace(" ", "_")
+        self.__slug = validate_value.lower().replace(" ", "-")
 
     @property
     def description(self) -> str:
@@ -104,6 +104,9 @@ class Food:
 
     def __str__(self) -> str:
         return f"{self.__name} - R${self.__price:.2f}"
+
+    def __repr__(self):
+        return self.__str__()
 
 class FoodPhoto:
     __id: int

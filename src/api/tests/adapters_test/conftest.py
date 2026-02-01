@@ -1,6 +1,7 @@
 import pytest
 
 from api.adapters.factories import FoodFactory
+from api.adapters.mapping import FoodMapping
 from api.domain.enums import OrderStatus
 
 
@@ -42,3 +43,7 @@ def simple_order_identify_data():
 @pytest.fixture
 def food_factory():
     return FoodFactory()
+
+@pytest.fixture
+def food_mapping(food_factory):
+    return FoodMapping(food_factory)

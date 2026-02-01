@@ -12,11 +12,11 @@ class IMapping(ABC, Generic[T, M]):
         self._factory = factory
 
     @abstractmethod
-    def to_model(self, entity: T) -> M:
+    def to_model(self, entity: T | list[T]) -> M | list[M]:
         pass
 
     @abstractmethod
-    def to_entitie(self, model: M) -> T:
+    def to_entitie(self, model: M | list[M]) -> T | list[T]:
         pass
 
 class ICategoryMapping(IMapping[Category, M], ABC):

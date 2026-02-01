@@ -33,7 +33,7 @@ class TestCategory:
         assert c.slug == "bebidas"
 
         c.slug = "Água Mineral"
-        assert c.slug == "água_mineral"
+        assert c.slug == "água-mineral"
 
         with pytest.raises(EmptyValidationException):
             c.slug = ""
@@ -65,7 +65,7 @@ class TestFood:
         assert f.slug == "pizza"
 
         f.slug = "Pizza Calabresa"
-        assert f.slug == "pizza_calabresa"
+        assert f.slug == "pizza-calabresa"
 
         with pytest.raises(EmptyValidationException):
             f.slug = ""
