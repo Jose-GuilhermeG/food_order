@@ -9,6 +9,7 @@ from api.application.interfaces.repositories import (
     IRepository,
 )
 from api.domain.entities import Category, Food
+from api.domain.exceptions import IntegrityException
 
 T = TypeVar("T" , bound=SQLModel)
 
@@ -71,3 +72,16 @@ class CategoryRepositoryDb(
     ICategoryRepository
 ):
     _model = CategoryModel
+
+    def get_by_slug(self, slug , exec : bool = True):
+        query = select(self._model).where(self._model.slug == slug)
+
+        if not exec:
+            return query
+
+        query_result = self.exec(query).first()
+
+        if query_result is None:
+            raise IntegrityException("Category not found")
+
+        return self.mapper.to_entitie(query_result)

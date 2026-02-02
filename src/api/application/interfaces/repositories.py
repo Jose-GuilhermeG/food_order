@@ -46,4 +46,6 @@ class IFoodRepository(
 class ICategoryRepository(
     IRepository[Category]
 ):
-    pass
+    @abstractmethod
+    def get_by_slug(self , slug : str)-> Category:
+        pass

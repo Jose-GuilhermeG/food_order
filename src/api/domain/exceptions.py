@@ -13,3 +13,13 @@ class IdValidationException(ValidationException):
 class EmptyValidationException(ValidationException):
     def __init__(self, message = "this field can't be empty", field=""):
         super().__init__(message, field)
+
+class IntegrityException(Exception):
+    def __init__(self, message : str = "bad request" , code : int = 400):
+        super().__init__(message)
+        self.code = code
+        self.message = message
+
+class InternalException(Exception):
+    def __init__(self, message = ""):
+        super().__init__(message)

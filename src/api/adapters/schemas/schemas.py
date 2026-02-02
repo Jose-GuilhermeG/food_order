@@ -36,3 +36,8 @@ class CategoryListSerializer(BaseSchemaLink):
     name : str
     slug : str
     image : str
+
+class CategoryDetailSerializer(BaseSchema):
+    name : str
+    slug : str
+    image : list[str]
