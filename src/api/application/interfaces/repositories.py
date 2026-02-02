@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
 from api.application.interfaces.mapping import IMapping
-from api.domain.entities import Food
+from api.domain.entities import Category, Food
 
 T = TypeVar("T")
 
@@ -40,5 +40,10 @@ class IRepository(
 
 class IFoodRepository(
     IRepository[Food],
+):
+    pass
+
+class ICategoryRepository(
+    IRepository[Category]
 ):
     pass

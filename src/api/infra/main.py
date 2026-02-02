@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from api.adapters.routes import food_routes
+from api.adapters.routes import category_routes, food_routes
 from api.infra.db import create_all_tables
 
 
@@ -18,3 +18,4 @@ app = FastAPI(
 
 #routes
 app.include_router(food_routes.router)
+app.include_router(category_routes.router)

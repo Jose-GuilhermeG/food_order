@@ -38,6 +38,13 @@ class TestCategory:
         with pytest.raises(EmptyValidationException):
             c.slug = ""
 
+    def test_image_validation(self):
+        c = Category()
+        c.image = "https://exemple_photo"
+
+        with pytest.raises(ValidationException):
+            c.image = 5
+
     def test_str_representation(self, simple_category):
         assert str(simple_category) == "Bebidas"
 

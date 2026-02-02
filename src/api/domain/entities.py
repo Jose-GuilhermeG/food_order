@@ -10,6 +10,7 @@ from api.domain.validations import (
 
 class Category:
     __id: int
+    __image : str
     __name: str
     __slug: str
 
@@ -20,6 +21,14 @@ class Category:
     @id.setter
     def id(self, value: int) -> None:
         self.__id = IdFieldValidation.validate(value)
+
+    @property
+    def image(self) -> str:
+        return self.__image
+
+    @image.setter
+    def image(self , value : str)-> None:
+        self.__image = TypeFieldValidation.validate(value , str , 'image')
 
     @property
     def name(self) -> str:

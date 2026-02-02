@@ -1,3 +1,4 @@
+from sqlalchemy import Column, Text
 from sqlmodel import Field, SQLModel
 
 
@@ -14,3 +15,11 @@ class FoodModel(
     slug : str
     description : str
     price : float
+
+class CategoryModel(
+    BaseModel,
+    table = True #type: ignore[call-arg]
+):
+    name : str = Field(unique=True)
+    image : str = Field(sa_column=Column(Text))
+    slug : str = Field(unique = True)

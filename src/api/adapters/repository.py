@@ -2,9 +2,13 @@ from typing import Type, TypeVar
 
 from sqlmodel import Session, SQLModel, delete, select
 
-from api.adapters.schemas.models import FoodModel
-from api.application.interfaces.repositories import IFoodRepository, IRepository
-from api.domain.entities import Food
+from api.adapters.schemas.models import CategoryModel, FoodModel
+from api.application.interfaces.repositories import (
+    ICategoryRepository,
+    IFoodRepository,
+    IRepository,
+)
+from api.domain.entities import Category, Food
 
 T = TypeVar("T" , bound=SQLModel)
 
@@ -61,3 +65,9 @@ class FoodRepositoryDb(
     IFoodRepository,
 ):
     _model = FoodModel
+
+class CategoryRepositoryDb(
+    RepositoryDb[Category],
+    ICategoryRepository
+):
+    _model = CategoryModel

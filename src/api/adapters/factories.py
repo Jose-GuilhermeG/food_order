@@ -1,7 +1,11 @@
 from typing import Generic, Type, TypeVar
 
-from api.application.interfaces.factories import IFactory, IFoodFactory
-from api.domain.entities import Food
+from api.application.interfaces.factories import (
+    ICategoryFactory,
+    IFactory,
+    IFoodFactory,
+)
+from api.domain.entities import Category, Food
 
 T = TypeVar("T")
 
@@ -36,6 +40,12 @@ class BaseFactory(
 
 class FoodFactory(
     BaseFactory[Food],
-    IFoodFactory
+    IFoodFactory,
 ) :
     _model = Food
+
+class CategoryFactory(
+    BaseFactory[Category],
+    ICategoryFactory
+):
+    _model = Category

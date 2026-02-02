@@ -3,12 +3,12 @@ from typing import Annotated
 from fastapi import Depends
 
 from api.adapters.dependencies.db import SessionDep
-from api.adapters.factories import FoodFactory
-from api.adapters.mapping import FoodMapping
-from api.adapters.repository import FoodRepositoryDb
-from api.application.interfaces.factories import IFoodFactory
+from api.adapters.factories import CategoryFactory, FoodFactory
+from api.adapters.mapping import CategoryMapping, FoodMapping
+from api.adapters.repository import CategoryRepositoryDb, FoodRepositoryDb
+from api.application.interfaces.factories import ICategoryFactory, IFoodFactory
 from api.application.interfaces.mapping import IMapping
-from api.application.interfaces.repositories import IFoodRepository
+from api.application.interfaces.repositories import ICategoryRepository, IFoodRepository
 
 
 def get_food_factory()->IFoodFactory:
@@ -25,3 +25,18 @@ def get_food_repository(food_mapping : FoodMappingDep , session : SessionDep) ->
     return FoodRepositoryDb(food_mapping,session)
 
 FoodRepositoryDep = Annotated[IFoodRepository , Depends(get_food_repository)]
+
+def get_category_factory()->ICategoryFactory:
+    return CategoryFactory()
+
+CategoryFactoryDep = Annotated[ICategoryFactory , Depends(get_category_factory)]
+
+def get_category_mapping(category_factory : CategoryFactoryDep)->IMapping:
+    return CategoryMapping(category_factory)
+
+CategoryMappingDep = Annotated[IMapping , Depends(get_category_mapping)]
+
+def get_category_repository(category_mapping : CategoryMappingDep , session : SessionDep) -> ICategoryRepository:
+    return CategoryRepositoryDb(category_mapping,session)
+
+CategoryRepositoryDep = Annotated[ICategoryRepository , Depends(get_category_repository)]

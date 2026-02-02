@@ -2,9 +2,9 @@ from typing import Generic, Type, TypeVar
 
 from sqlmodel import SQLModel
 
-from api.adapters.schemas.models import FoodModel
+from api.adapters.schemas.models import CategoryModel, FoodModel
 from api.application.interfaces.mapping import IMapping
-from api.domain.entities import Food
+from api.domain.entities import Category, Food
 
 T = TypeVar("T")
 M = TypeVar("M")
@@ -60,3 +60,10 @@ class FoodMapping(
 ):
     _entity = Food
     _model = FoodModel
+
+class CategoryMapping(
+    BaseMapping[Category , CategoryModel]
+):
+
+    _entity = Category
+    _model = CategoryModel
