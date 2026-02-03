@@ -4,12 +4,30 @@ from pydantic import BaseModel, Field
 
 class BaseSchema(BaseModel):
     @classmethod
-    def to_schema(cls , entity : object):
-        entity_atrrs = [atrr for atrr in dir(entity) if not atrr.startswith("__") and not atrr.endswith("__")]
+    def to_schema(cls , entity: object):
+        entity_atrrs = [
+            atrr for atrr in dir(entity)
+            if not atrr.startswith("__") and not atrr.endswith("__")
+        ]
         cls_atrrs = [atrr for atrr in cls.model_fields.keys() if atrr in entity_atrrs]
-        data = {atrr: getattr(entity, atrr) for atrr in cls_atrrs}
+        data = {}
+
+        for atrr in cls_atrrs:
+            value = getattr(entity, atrr)
+
+            field_type = cls.model_fields[atrr].annotation
+            if getattr(field_type, "__origin__", None) is list:
+                inner_type = field_type.__args__[0] #type: ignore
+                if issubclass(inner_type, BaseSchema):
+                    value = [inner_type.to_schema(v) for v in value]
+
+            elif isinstance(value, object) and issubclass(field_type, BaseSchema): #type: ignore
+                value = field_type.to_schema(value) #type: ignore
+
+            data[atrr] = value
 
         return cls(**data)
+
 
 class BaseSchemaLink(BaseSchema):
     url : str | None = None
@@ -24,16 +42,15 @@ class BaseSchemaLink(BaseSchema):
             instance.url = request.url_for(cls.view_name , **{cls.lookup_field : lookup_value})
         return instance
 
-class FoodListSerializer(BaseSchema):
+class FoodPhotoSerializer(BaseSchema):
+    photo_url : str
+
+class FoodSerializer(BaseSchema):
     name : str
     slug : str
     description : str
     price : float
-
-class FoodDetailSerializer(BaseSchema):
-    name : str
-    slug : str
-    price : float
+    photos : list[FoodPhotoSerializer]
 
 class CategoryListSerializer(BaseSchemaLink):
     name : str
@@ -44,4 +61,4 @@ class CategoryDetailSerializer(BaseSchema):
     name : str
     slug : str
     image : str
-    foods : list[FoodDetailSerializer]
+    foods : list[FoodSerializer]

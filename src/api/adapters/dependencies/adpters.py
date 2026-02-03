@@ -3,21 +3,35 @@ from typing import Annotated
 from fastapi import Depends
 
 from api.adapters.dependencies.db import SessionDep
-from api.adapters.factories import CategoryFactory, FoodFactory
-from api.adapters.mapping import CategoryMapping, FoodMapping
+from api.adapters.factories import CategoryFactory, FoodFactory, FoodPhotoFactory
+from api.adapters.mapping import CategoryMapping, FoodMapping, FoodPhotoMapping
 from api.adapters.repository import CategoryRepositoryDb, FoodRepositoryDb
-from api.application.interfaces.factories import ICategoryFactory, IFoodFactory
+from api.application.interfaces.factories import (
+    ICategoryFactory,
+    IFactory,
+    IFoodFactory,
+)
 from api.application.interfaces.mapping import IMapping
 from api.application.interfaces.repositories import ICategoryRepository, IFoodRepository
 
+
+def get_food_photo_factory()->IFactory:
+    return FoodPhotoFactory()
+
+FoodPhotoFactoryDep = Annotated[IFactory , Depends(get_food_photo_factory)]
+
+def get_food_photo_mapping(get_food_photo_factory : FoodPhotoFactoryDep):
+    return FoodPhotoMapping(get_food_photo_factory)
+
+FoodPhotoMappingDep = Annotated[IMapping , Depends(get_food_photo_mapping)]
 
 def get_food_factory()->IFoodFactory:
     return FoodFactory()
 
 FoodFactoryDep = Annotated[IFoodFactory , Depends(get_food_factory)]
 
-def get_food_mapping(food_factory : FoodFactoryDep)->IMapping:
-    return FoodMapping(food_factory)
+def get_food_mapping(food_factory : FoodFactoryDep , food_photo_mapping : FoodPhotoMappingDep)->IMapping:
+    return FoodMapping(food_factory , extra_mappings={'photos' : food_photo_mapping})
 
 FoodMappingDep = Annotated[IMapping , Depends(get_food_mapping)]
 

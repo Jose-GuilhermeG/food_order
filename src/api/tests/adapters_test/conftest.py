@@ -1,7 +1,7 @@
 import pytest
 
-from api.adapters.factories import FoodFactory
-from api.adapters.mapping import FoodMapping
+from api.adapters.factories import FoodFactory, FoodPhotoFactory
+from api.adapters.mapping import FoodMapping, FoodPhotoMapping
 from api.domain.enums import OrderStatus
 
 
@@ -45,5 +45,13 @@ def food_factory():
     return FoodFactory()
 
 @pytest.fixture
-def food_mapping(food_factory):
-    return FoodMapping(food_factory)
+def food_photo_factory():
+    return FoodPhotoFactory()
+
+@pytest.fixture
+def food_photo_mapping(food_photo_factory):
+    return FoodPhotoMapping(food_photo_factory)
+
+@pytest.fixture
+def food_mapping(food_factory , food_photo_mapping):
+    return FoodMapping(food_factory , extra_mappings={'photos' : food_photo_mapping})

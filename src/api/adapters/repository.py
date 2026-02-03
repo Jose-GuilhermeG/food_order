@@ -1,4 +1,4 @@
-from typing import Type, TypeVar
+from typing import Any, Type, TypeVar
 
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, SQLModel, delete, select
@@ -18,6 +18,7 @@ class RepositoryDb(
     IRepository[T],
 ):
     _model : Type[T] = None #type: ignore
+    _extra_models : Any
 
     def __init__(self, mapper  , session : Session):
         super().__init__(mapper)
@@ -62,14 +63,24 @@ class RepositoryDb(
     def exec(self,query):
         return self.session.exec(query)
 
+    def _select(self , *data):
+        query = select(*data).options(
+            selectinload(
+                *self._extra_models
+            )
+        )
+
+        return query
+
 class FoodRepositoryDb(
     RepositoryDb[Food],
     IFoodRepository,
 ):
     _model = FoodModel
+    _extra_models = [FoodModel.photos]
 
     def get_by_slug(self, slug , exec : bool = True):
-        query = select(self._model).where(self._model.slug == slug)
+        query = self._select(self._model).where(self._model.slug == slug)
 
         if not exec:
             return query
@@ -87,6 +98,7 @@ class CategoryRepositoryDb(
     ICategoryRepository
 ):
     _model = CategoryModel
+    _extra_models = [CategoryModel.foods]
 
     def get_by_slug(self, slug , exec : bool = True):
         query = select(self._model).options(selectinload(self._model.foods)).where(self._model.slug == slug)

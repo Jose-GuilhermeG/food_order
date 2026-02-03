@@ -27,6 +27,9 @@ class FoodModel(
         back_populates="foods",
         link_model=FoodCategoryModel
     )
+    photos : list["FoodPhotoModel"] = Relationship(
+        back_populates="food"
+    )
 
 class CategoryModel(
     BaseModel,
@@ -40,3 +43,11 @@ class CategoryModel(
         back_populates="categories",
         link_model=FoodCategoryModel
     )
+
+class FoodPhotoModel(
+    BaseModel,
+    table = True #type: ignore[call-arg]
+):
+    food_id : int = Field(foreign_key="foodmodel.id")
+    photo_url : str
+    food: "FoodModel" = Relationship(back_populates="photos")

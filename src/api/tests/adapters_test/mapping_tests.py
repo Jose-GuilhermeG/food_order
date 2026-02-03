@@ -1,7 +1,7 @@
 import pytest
 
-from api.adapters.schemas.models import FoodModel
-from api.domain.entities import Food
+from api.adapters.schemas.models import FoodModel, FoodPhotoModel
+from api.domain.entities import Food, FoodPhoto
 
 
 class FoodMappingTest:
@@ -32,7 +32,13 @@ class FoodMappingTest:
             name="Suco",
             slug="suco",
             description="Suco natural",
-            price=5.5
+            price=5.5,
+            photos=[
+                FoodPhotoModel(
+                    food_id=2,
+                    photo_url="http://test.example.com"
+                ),
+            ]
         )
 
         entity = food_mapping.to_entitie(model)
@@ -42,6 +48,8 @@ class FoodMappingTest:
         assert entity.slug == "suco"
         assert entity.description == "Suco natural"
         assert entity.price == 5.5
+        assert len(entity.photos) == 1
+        assert isinstance(entity.photos[0],FoodPhoto)
 
 
     def test_to_model_many(self,food_mapping, food_factory):

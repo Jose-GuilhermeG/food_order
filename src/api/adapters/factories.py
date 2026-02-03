@@ -5,7 +5,7 @@ from api.application.interfaces.factories import (
     IFactory,
     IFoodFactory,
 )
-from api.domain.entities import Category, Food
+from api.domain.entities import Category, Food, FoodPhoto
 
 T = TypeVar("T")
 
@@ -49,3 +49,8 @@ class CategoryFactory(
     ICategoryFactory
 ):
     _model = Category
+
+class FoodPhotoFactory(
+    BaseFactory[FoodPhoto],
+):
+    _model = FoodPhoto
