@@ -15,21 +15,28 @@ class BaseMapping(
 ):
     _entity : Type[T]
     _model : Type[M]
+    _extra_attrs : list[str] = []
 
     def __init__(self, factory):
         super().__init__(factory)
         self._atrrs = [atrr for atrr in dir(self._entity) if not atrr.startswith("__") and not atrr.endswith("__") ]
 
+    def get_model_values(self , model : SQLModel):
+        data = {**model.model_dump()}
+        for attr in self._extra_attrs:
+            data[attr] = getattr(model,attr)
+        return data
+
     def to_entitie(self, model : SQLModel | list[SQLModel])-> T | list[T]:
         if isinstance(model , (list , tuple , set)):
             return self.to_entitie_many(model) #type: ignore
 
-        return self._factory.reconstruct(**model.model_dump())
+        return self._factory.reconstruct(**self.get_model_values(model))
 
     def to_entitie_many(self , models : list[SQLModel]) -> list[T]:
         entity_list = []
         for model in models:
-            entity_list.append(self._factory.reconstruct(**model.model_dump()))
+            entity_list.append(self._factory.reconstruct(**self.get_model_values(model)))
 
         return entity_list
 
@@ -67,3 +74,4 @@ class CategoryMapping(
 
     _entity = Category
     _model = CategoryModel
+    _extra_attrs = ['foods']

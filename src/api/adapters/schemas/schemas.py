@@ -7,11 +7,9 @@ class BaseSchema(BaseModel):
     def to_schema(cls , entity : object):
         entity_atrrs = [atrr for atrr in dir(entity) if not atrr.startswith("__") and not atrr.endswith("__")]
         cls_atrrs = [atrr for atrr in cls.model_fields.keys() if atrr in entity_atrrs]
-        instance = cls
-        for atrr in cls_atrrs:
-            setattr(instance,atrr,getattr(entity,atrr))
+        data = {atrr: getattr(entity, atrr) for atrr in cls_atrrs}
 
-        return instance
+        return cls(**data)
 
 class BaseSchemaLink(BaseSchema):
     url : str | None = None
@@ -32,6 +30,11 @@ class FoodListSerializer(BaseSchema):
     description : str
     price : float
 
+class FoodDetailSerializer(BaseSchema):
+    name : str
+    slug : str
+    price : float
+
 class CategoryListSerializer(BaseSchemaLink):
     name : str
     slug : str
@@ -40,4 +43,5 @@ class CategoryListSerializer(BaseSchemaLink):
 class CategoryDetailSerializer(BaseSchema):
     name : str
     slug : str
-    image : list[str]
+    image : str
+    foods : list[FoodDetailSerializer]

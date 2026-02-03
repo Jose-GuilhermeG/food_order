@@ -1,5 +1,6 @@
 from typing import Type, TypeVar
 
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, SQLModel, delete, select
 
 from api.adapters.schemas.models import CategoryModel, FoodModel
@@ -67,6 +68,20 @@ class FoodRepositoryDb(
 ):
     _model = FoodModel
 
+    def get_by_slug(self, slug , exec : bool = True):
+        query = select(self._model).where(self._model.slug == slug)
+
+        if not exec:
+            return query
+
+        query_result = self.exec(query).first()
+
+        if query_result is None:
+            raise IntegrityException("food not found")
+
+        return self.mapper.to_entitie(query_result)
+
+
 class CategoryRepositoryDb(
     RepositoryDb[Category],
     ICategoryRepository
@@ -74,7 +89,7 @@ class CategoryRepositoryDb(
     _model = CategoryModel
 
     def get_by_slug(self, slug , exec : bool = True):
-        query = select(self._model).where(self._model.slug == slug)
+        query = select(self._model).options(selectinload(self._model.foods)).where(self._model.slug == slug)
 
         if not exec:
             return query

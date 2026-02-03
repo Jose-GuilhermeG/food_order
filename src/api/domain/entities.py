@@ -13,6 +13,7 @@ class Category:
     __image : str
     __name: str
     __slug: str
+    __foods : list['Food']
 
     @property
     def id(self) -> int:
@@ -46,6 +47,17 @@ class Category:
     def slug(self, value: str) -> None:
         validate_value = RequiredFieldValidation.validate(value, "slug")
         self.__slug = validate_value.lower().replace(" ", "-")
+
+    @property
+    def foods(self)->list['Food']:
+        return self.__foods
+
+    @foods.setter
+    def foods(self , value : list['Food']) -> None:
+        self.__foods = TypeFieldValidation.validate(value , list , 'foods')
+
+    def add_food(self , value : 'Food') -> None:
+        self.__foods.append(value)
 
     def __str__(self) -> str:
         return self.__name
