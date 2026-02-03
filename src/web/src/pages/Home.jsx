@@ -1,6 +1,7 @@
 //imports
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Clock, Flame, ChefHat, X, Plus, Minus } from 'lucide-react';
+import { get_food_by_category, get_food_details } from '../services/food_services';
 
 //components
 import FoodGalary from '../features/food/FoodGalery';
@@ -11,94 +12,36 @@ import RightSideBar from '../components/side_bar/RightSideBar';
 import SimpleSearchInput from '../components/inputs/SearchInput';
 import BasicModal from '../components/modal/BasicModal';
 import FoodDetail from '../features/food/foodDetail';
+import { get_all_categories } from '../services/categories_service';
 
 export default function FoodDeliveryHome() {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [orders, setOrders] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('todos');
   const [isSideBarOpen, setSideBarOpen] = useState(false);
   const [orderNumber, setOrderNumber] = useState(null);
   const [productDetail , setProductDetail] = useState()
   const [openProductDetailModal , setOpenProductDetailModal] = useState(false)
+  const [categories , setCategories] = useState([])
 
   useEffect(() => {
-        const mockProducts = [
-      {
-        id: 1,
-        name: 'Hambúrguer Artesanal',
-        description: 'Blend premium com queijo cheddar, bacon e molho especial',
-        price: 28.90,
-        category: 'burgers',
-        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop',
-        prepTime: '15-20 min'
-      },
-      {
-        id: 2,
-        name: 'Pizza Margherita',
-        description: 'Molho de tomate, mussarela de búfala e manjericão fresco',
-        price: 42.00,
-        category: 'pizzas',
-        image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop',
-        prepTime: '20-25 min'
-      },
-      {
-        id: 3,
-        name: 'Yakissoba Especial',
-        description: 'Macarrão oriental com legumes, carne e molho shoyu',
-        price: 32.00,
-        category: 'asian',
-        image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400&h=300&fit=crop',
-        prepTime: '15-20 min'
-      },
-      {
-        id: 4,
-        name: 'Salada Caesar',
-        description: 'Alface americana, croutons, parmesão e molho caesar',
-        price: 24.00,
-        category: 'salads',
-        image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop',
-        prepTime: '10-15 min'
-      },
-      {
-        id: 5,
-        name: 'Frango Grelhado',
-        description: 'Peito de frango grelhado com arroz integral e legumes',
-        price: 29.90,
-        category: 'healthy',
-        image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&h=300&fit=crop',
-        prepTime: '20-25 min'
-      },
-      {
-        id: 6,
-        name: 'Tacos Mexicanos',
-        description: 'Tortillas com carne moída, guacamole e pico de gallo',
-        price: 26.00,
-        category: 'mexican',
-        image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=400&h=300&fit=crop',
-        prepTime: '15-20 min'
-      }
-    ];
-    setProducts(mockProducts);
+    const load_products = async ()=>{
+      get_food_by_category(selectedCategory).then(data=>data.data).then(
+        data => setProducts(data.foods)
+      ).catch(err=>console.log(err))
+    }
 
-  }, []);
+    const load_categories = async ()=>{
+      get_all_categories().then(data=>data.data).then(data=>{
+        setCategories(data)
+      }).catch(err=>console.log(err))
+    }
 
-  const categories = [
-    { id: 'all', name: 'Todos', icon: '🍽️' },
-    { id: 'burgers', name: 'Hambúrgueres', icon: '🍔' },
-    { id: 'pizzas', name: 'Pizzas', icon: '🍕' },
-    { id: 'asian', name: 'Oriental', icon: '🍜' },
-    { id: 'salads', name: 'Saladas', icon: '🥗' },
-    { id: 'healthy', name: 'Saudável', icon: '🥙' },
-    { id: 'mexican', name: 'Mexicana', icon: '🌮' }
-  ];
+    load_products()
+    load_categories()
+  }, [selectedCategory]);
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
 
   const addToCart = (product) => {
     const existingItem = orders.find(item => item.id === product.id);
@@ -132,9 +75,13 @@ export default function FoodDeliveryHome() {
     setSideBarOpen(false)
   };
 
-  const open_product_detail = (product)=>{
-    setOpenProductDetailModal(true)
-    setProductDetail(product)
+  const open_product_detail = async (product)=>{
+    get_food_details(product.slug).then(data=>data.data).then(
+      data=>{
+        setOpenProductDetailModal(true)
+        setProductDetail(data)
+      }
+    ).catch(err=>console.log(err))
   }
 
 
@@ -146,10 +93,10 @@ export default function FoodDeliveryHome() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
           <SimpleSearchInput searchvalue={searchQuery} set_search_value={setSearchQuery}/>
         <div className="flex overflow-x-auto gap-3 pb-6 mb-8 scrollbar-hide">
-          <CategoryGalery categories={categories}/>
+          <CategoryGalery categories={categories} set_category={setSelectedCategory} selected_category={selectedCategory}/>
         </div>
 
-       <FoodGalary products={filteredProducts} add_event={addToCart} on_click={open_product_detail} />
+       <FoodGalary products={products} add_event={addToCart} on_click={open_product_detail} />
       </div>
 
        <RightSideBar set_open_state={setSideBarOpen} open_state={isSideBarOpen}>
@@ -179,7 +126,7 @@ export default function FoodDeliveryHome() {
                       >
                         <div className="flex items-start space-x-4">
                           <img
-                            src={item.image}
+                            src={item.photo_url}
                             alt={item.name}
                             className="w-20 h-20 rounded-lg object-cover"
                           />
@@ -277,7 +224,7 @@ export default function FoodDeliveryHome() {
         <ShoppingCart className="w-6 h-6 text-white" strokeWidth={2} />
       </FloatButton>
 
-      <FoodDetail state={openProductDetailModal} product={productDetail} set_state={setOpenProductDetailModal} />
+      <FoodDetail state={openProductDetailModal} food={productDetail} set_state={setOpenProductDetailModal} />
 
     </div>
   );

@@ -24,7 +24,7 @@ def list_categories_view(repository : CategoryRepositoryDep):
     return [CategoryListSerializer.to_schema(category) for category in result]
 
 @router.get(
-    '/<slug>/',
+    '/{slug}/',
     response_model=CategoryDetailSerializer
 )
 def category_detail_view(slug : str , repository : CategoryRepositoryDep):

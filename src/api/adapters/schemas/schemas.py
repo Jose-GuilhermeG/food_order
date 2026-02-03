@@ -1,5 +1,5 @@
 from fastapi import Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 
 class BaseSchema(BaseModel):
@@ -52,6 +52,17 @@ class FoodSerializer(BaseSchema):
     price : float
     photos : list[FoodPhotoSerializer]
 
+class FoodListSerializer(FoodSerializer):
+    id : int
+    photos : list[FoodPhotoSerializer] = Field(exclude=True)
+
+    @computed_field #type: ignore
+    @property
+    def photo_url(self) -> str:
+        return self.photos[0].photo_url
+
+
+
 class CategoryListSerializer(BaseSchemaLink):
     name : str
     slug : str
@@ -61,4 +72,4 @@ class CategoryDetailSerializer(BaseSchema):
     name : str
     slug : str
     image : str
-    foods : list[FoodSerializer]
+    foods : list[FoodListSerializer]

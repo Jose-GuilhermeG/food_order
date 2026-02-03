@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import AddCartButton from "../cart/AddCartButton";
 import BaseModal from "../../components/modal/BaseModal";
 
-export default function FoodDetail({ state , set_state , product , ...props}){
+export default function FoodDetail({ state , set_state , food , ...props}){
 
     if (!state) return <div></div>
 
@@ -15,17 +15,19 @@ export default function FoodDetail({ state , set_state , product , ...props}){
                 >
                   <X className="w-6 h-6 text-gray-400" />
                 </button>
-                <div className="w-full h-3/6 rounded-2xl">
-                    <img src={product.image} alt=""  className="w-full h-full object-cover object-center rounded-2xl"/>
+                <div className="w-full h-3/6 rounded-2xl flex overflow-hidden">
+                    {
+                        food.photos.map((photo)=><img src={photo.photo_url} className="min-w-full h-full object-cover object-center rounded-2xl" />)
+                    }
                 </div>
                 <h1 className="text-3xl text-white font-black p-5 text-left mt-10 mx-5">
-                    {product.name}
+                    {food.name}
                 </h1>
                 <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 p-5 mx-5">
-                    R$ {product.price.toFixed(2)}
+                    R$ {food.price.toFixed(2)}
                   </span>
                 <p className="text-white text-left mx-5 p-5 text-wrap max-w-full whitespace-normal wrap-break-word">
-                    {product.description}
+                    {food.description}
                 </p>
                 <AddCartButton style={{width : '90%' , left : '5%' , margin : '10% 0 0 0'}} />
             </div>

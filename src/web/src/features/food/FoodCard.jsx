@@ -10,7 +10,7 @@ export default function FoodCard({product , on_click ,add_event }){
             >
               <div className="relative overflow-hidden h-48">
                 <img
-                  src={product.image}
+                  src={product.photo_url}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -29,7 +29,10 @@ export default function FoodCard({product , on_click ,add_event }){
                   <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
                     R$ {product.price.toFixed(2)}
                   </div>
-                  <AddCartButton on_click={add_event} />
+                  <AddCartButton on_click={(e)=>{
+                    e.stopPropagation()
+                    add_event(product)
+                  }} />
                 </div>
               </div>
             </div>
