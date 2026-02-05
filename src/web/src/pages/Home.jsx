@@ -14,7 +14,7 @@ import BasicModal from '../components/modal/BasicModal';
 import FoodDetail from '../features/food/foodDetail';
 import { get_all_categories } from '../services/categories_service';
 
-export default function FoodDeliveryHome() {
+export default function Home() {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [orders, setOrders] = useState([]);
@@ -86,7 +86,7 @@ export default function FoodDeliveryHome() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <div className="min-h-screen bg-black-gradient">
 
       <Banner content='Peça Agora' br_content='Retire Rápido.' description='Escolha suas refeições favoritas, pague online e retire no balcão. Simples assim.' />
 

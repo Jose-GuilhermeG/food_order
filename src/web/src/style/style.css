@@ -1,1 +1,14 @@
 @import 'tailwindcss';
+
+@theme{
+    --color-orange-gradient: linear-gradient(to right , var(--color-red-600) , var(--color-orange-600) , var(--color-red-600));
+    --color-black-gradient: linear-gradient(to right bottom, var(--color-gray-900) , var(--color-black) , var(--color-gray-900))
+}
+
+.bg-orange-gradient{
+    background-image: var(--color-orange-gradient);
+}
+
+.bg-black-gradient{
+    background-image: var(--color-black-gradient);
+}
