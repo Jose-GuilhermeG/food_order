@@ -50,6 +50,12 @@ class RepositoryDb(
         self.session.flush()
         return self.mapper.to_entitie(model)
 
+    def create_group(self, list_entitie):
+        models_list = self.mapper.to_model(list_entitie)
+        self.session.add_all(models_list)
+        self.session.flush()
+        return self.mapper.to_entitie(models_list)
+
     def save(self, entitie):
         model = self.mapper.to_model(entitie)
         self.session.merge(model)

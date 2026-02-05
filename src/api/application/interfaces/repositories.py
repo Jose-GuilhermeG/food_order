@@ -2,17 +2,14 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
 from api.application.interfaces.mapping import IMapping
-from api.domain.entities import Category, Food
+from api.domain.entities import Category, Food, Order, OrderIdentify
 
 T = TypeVar("T")
 
-class IRepository(
+class IAddOperation(
     ABC,
     Generic[T]
 ):
-    def __init__(self , mapper : IMapping):
-        self.mapper = mapper
-
     @abstractmethod
     def save(self , entitie : T) -> T:
         pass
@@ -22,9 +19,26 @@ class IRepository(
         pass
 
     @abstractmethod
+    def create_group(self , list_entitie : list[T]) -> list[T]:
+        pass
+
+
+class IIdOperations(
+    ABC,
+    Generic[T]
+):
+    @abstractmethod
     def get_by_id(self , id : int)-> T | None:
         pass
 
+    @abstractmethod
+    def delete_by_id(self , id : int)->None:
+        pass
+
+class IReadOperation(
+    ABC,
+    Generic[T]
+):
     @abstractmethod
     def all(self) -> list[T]:
         pass
@@ -33,10 +47,23 @@ class IRepository(
     def limit(self , limit : int , offeset : int) -> list[T]:
         pass
 
-    @abstractmethod
-    def delete_by_id(self , id : int)->None:
-        pass
 
+
+class IBaseRepository(
+    IAddOperation[T],
+    IReadOperation[T],
+    Generic[T]
+):
+    def __init__(self , mapper : IMapping):
+        self.mapper = mapper
+
+
+class IRepository(
+    IBaseRepository[T],
+    IIdOperations[T],
+    Generic[T]
+):
+    pass
 
 class IFoodRepository(
     IRepository[Food],
@@ -51,4 +78,22 @@ class ICategoryRepository(
 ):
     @abstractmethod
     def get_by_slug(self , slug : str)-> Category:
+        pass
+
+class IOrderRepository(
+    IBaseRepository[Order],
+):
+    @abstractmethod
+    def get_orders_by_order_identify(self , order_identify : int)-> list[Order]:
+        pass
+
+class IOrderIdentifyRepository(
+    IBaseRepository[OrderIdentify],
+):
+    @abstractmethod
+    def add_order(self , order_identify : int)->None:
+        pass
+
+    @abstractmethod
+    def get_identify_number(self)->int:
         pass

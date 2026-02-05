@@ -209,6 +209,7 @@ class Order:
 class OrderIdentify:
     __code: int
     __client_name: str
+    __orders : list[Order]
 
     @property
     def code(self) -> int:
@@ -225,6 +226,17 @@ class OrderIdentify:
     @client_name.setter
     def client_name(self, value: str) -> None:
         self.__client_name = RequiredFieldValidation.validate(value, "client_name")
+
+    @property
+    def orders(self)->list[Order]:
+        return self.__orders
+
+    @orders.setter
+    def orders(self , value : list[Order])->None:
+        self.__orders = value
+
+    def add_order(self , value : Order)->None:
+        self.__orders.append(value)
 
     def __str__(self) -> str:
         return f"Order Code: {self.__code} - Client: {self.__client_name}"

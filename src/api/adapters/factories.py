@@ -18,9 +18,10 @@ class BaseFactory(
     _public_attrs : list[str] = []
     _ignore_attrs : list[str] = []
 
-    def __init__(self):
-        self._public_attrs = [atrr for atrr in dir(self._model) if not atrr.startswith("__") and not atrr.endswith("__") ]
+    def __init__(self , ignore_attrs  : list[str] = []):
+        self._public_attrs = [atrr for atrr in dir(self._model) if not atrr.startswith("__") and not atrr.endswith("__") and atrr not in self._ignore_attrs ]
         self._private_attrs = [atrr for atrr in self._model.__annotations__ if atrr.startswith(f"_{self._model.__name__}__") and not atrr.endswith("__")]
+        self._ignore_attrs = ignore_attrs
 
     def create(self, **kwargs):
         instance = self._model()
