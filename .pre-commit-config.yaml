@@ -1,3 +1,4 @@
+exclude : ^migrations/.*\.py 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v3.2.0
@@ -17,7 +18,8 @@ repos:
     - id: ruff
       args: [--fix]
       files: ^src/api/.*\.py$
-      exclude: ^src/api/tests/
+      exclude: ^src/api/(tests|.*/migrations)/.*\.py$
+
 
 - repo: https://github.com/pycqa/isort
   rev: 5.13.2

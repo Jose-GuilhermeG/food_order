@@ -17,7 +17,6 @@ export default function FoodCard({product , on_click ,add_event }){
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div className="absolute bottom-3 left-3 flex items-center space-x-2 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
                   <Clock className="w-4 h-4 text-orange-400" />
-                  <span className="text-white text-xs font-bold">{product.prepTime}</span>
                 </div>
               </div>
 

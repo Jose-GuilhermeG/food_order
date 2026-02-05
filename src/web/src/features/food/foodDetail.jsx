@@ -2,9 +2,11 @@ import { X } from "lucide-react";
 import AddCartButton from "../cart/AddCartButton";
 import BaseModal from "../../components/modal/BaseModal";
 
-export default function FoodDetail({ state , set_state , food , ...props}){
+export default function FoodDetail({ state , add_envent ,set_state , food , ...props}){
 
     if (!state) return <div></div>
+
+    const data_food = {...food , photo_url : food.photos[0].photo_url}
 
     return (
         <BaseModal id="productModal" open_state={state} set_open_state={set_state} {...props} style={{display : 'flex' , justifyItems : 'center' , alignItems : "center"}}>
@@ -29,7 +31,7 @@ export default function FoodDetail({ state , set_state , food , ...props}){
                 <p className="text-white text-left mx-5 p-5 text-wrap max-w-full whitespace-normal wrap-break-word">
                     {food.description}
                 </p>
-                <AddCartButton style={{width : '90%' , left : '5%' , margin : '10% 0 0 0'}} />
+                <AddCartButton style={{width : '90%' , left : '5%' , margin : '10% 0 0 0'}} on_click={()=>add_envent(data_food)} />
             </div>
         </BaseModal>
     )

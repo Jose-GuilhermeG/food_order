@@ -224,7 +224,7 @@ export default function Home() {
         <ShoppingCart className="w-6 h-6 text-white" strokeWidth={2} />
       </FloatButton>
 
-      <FoodDetail state={openProductDetailModal} food={productDetail} set_state={setOpenProductDetailModal} />
+      <FoodDetail state={openProductDetailModal} food={productDetail} set_state={setOpenProductDetailModal} add_envent={addToCart} />
 
     </div>
   );

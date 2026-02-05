@@ -46,6 +46,7 @@ class FoodPhotoSerializer(BaseSchema):
     photo_url : str
 
 class FoodSerializer(BaseSchema):
+    id : int
     name : str
     slug : str
     description : str
@@ -53,7 +54,6 @@ class FoodSerializer(BaseSchema):
     photos : list[FoodPhotoSerializer]
 
 class FoodListSerializer(FoodSerializer):
-    id : int
     photos : list[FoodPhotoSerializer] = Field(exclude=True)
 
     @computed_field #type: ignore

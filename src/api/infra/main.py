@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.adapters.admin.routes import register_admin
 from api.adapters.routes import category_routes, food_routes
 from api.domain.exceptions import IntegrityException
 from api.infra.db import create_all_tables
@@ -38,3 +39,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+register_admin(app)
