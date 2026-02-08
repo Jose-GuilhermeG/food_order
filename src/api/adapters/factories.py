@@ -5,7 +5,7 @@ from api.application.interfaces.factories import (
     IFactory,
     IFoodFactory,
 )
-from api.domain.entities import Category, Food, FoodPhoto
+from api.domain.entities import Category, Food, FoodPhoto, Order, OrderIdentify
 
 T = TypeVar("T")
 
@@ -16,12 +16,28 @@ class BaseFactory(
     _model : Type[T]
     _private_attrs : list[str] = []
     _public_attrs : list[str] = []
-    _ignore_attrs : list[str] = []
+    __ignore_attrs : list[str] = []
 
     def __init__(self , ignore_attrs  : list[str] = []):
         self._ignore_attrs = ignore_attrs
+        self.load_public_attrs()
+        self.load_private_attrs()
+
+    def load_public_attrs(self):
         self._public_attrs = [atrr for atrr in dir(self._model) if not atrr.startswith("__") and not atrr.endswith("__") and atrr not in self._ignore_attrs ]
+
+    def load_private_attrs(self):
         self._private_attrs = [atrr for atrr in self._model.__annotations__ if atrr.startswith(f"_{self._model.__name__}__") and not atrr.endswith("__")]
+
+    @property
+    def _ignore_attrs(self)->list[str]:
+        return self.__ignore_attrs
+
+    @_ignore_attrs.setter
+    def _ignore_attrs(self , value : list[str])->None:
+        self.__ignore_attrs = value
+        self.load_public_attrs()
+        self.load_private_attrs()
 
     def create(self, **kwargs):
         instance = self._model()
@@ -55,3 +71,13 @@ class FoodPhotoFactory(
     BaseFactory[FoodPhoto],
 ):
     _model = FoodPhoto
+
+class OrderIdentifyFactory(
+    BaseFactory[OrderIdentify]
+):
+    _model = OrderIdentify
+
+class OrderFactory(
+    BaseFactory[Order]
+):
+    _model = Order

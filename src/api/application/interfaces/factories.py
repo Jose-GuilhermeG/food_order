@@ -9,6 +9,8 @@ class IFactory(
     ABC,
     Generic[T]
 ):
+    _ignore_attrs : list[str] = []
+
     @abstractmethod
     def create(self , **kwargs) -> T: pass
 

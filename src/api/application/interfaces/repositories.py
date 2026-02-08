@@ -83,17 +83,14 @@ class ICategoryRepository(
 class IOrderRepository(
     IBaseRepository[Order],
 ):
-    @abstractmethod
-    def get_orders_by_order_identify(self , order_identify : int)-> list[Order]:
-        pass
+    pass
+    #@abstractmethod
+    #def get_orders_by_order_identify(self , order_identify : int)-> list[Order]:
+    #    pass
 
 class IOrderIdentifyRepository(
     IBaseRepository[OrderIdentify],
 ):
     @abstractmethod
-    def add_order(self , order_identify : int)->None:
-        pass
-
-    @abstractmethod
-    def get_identify_number(self)->int:
+    def get_last(self)->OrderIdentify:
         pass

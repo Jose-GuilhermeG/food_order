@@ -3,10 +3,12 @@ from typing import Any, Type, TypeVar
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, SQLModel, delete, select
 
+from api.adapters.queue import OrderQueue
 from api.adapters.schemas.models import CategoryModel, FoodModel
 from api.application.interfaces.repositories import (
     ICategoryRepository,
     IFoodRepository,
+    IOrderIdentifyRepository,
     IRepository,
 )
 from api.domain.entities import Category, Food
@@ -118,3 +120,27 @@ class CategoryRepositoryDb(
             raise IntegrityException("Category not found")
 
         return self.mapper.to_entitie(query_result)
+
+class OrderIdentifyRepository(
+    IOrderIdentifyRepository
+):
+    def __init__(self , queue : OrderQueue )->None:
+        self._queue = queue
+
+    def create(self, entitie):
+        return self._queue.add(entitie)
+
+    def save(self, entitie):
+        return entitie
+
+    def all(self):
+        return self._queue.all()
+
+    def limit(self, limit, offeset):
+        return []
+
+    def get_last(self):
+        return self._queue.get_last()
+
+    def create_group(self, list_entitie):
+        return []

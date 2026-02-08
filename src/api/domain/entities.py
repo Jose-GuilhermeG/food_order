@@ -203,7 +203,7 @@ class Order:
         self.__status = EnumValidate.validate(value , OrderStatus) #type: ignore
 
     def __str__(self) -> str:
-        return f"Order {self.__order_identify} - Food {self.__food_id} x {self.__quantity} [{self.__status}]"
+        return f"Food {self.__food_id} x {self.__quantity} [{self.__status}]"
 
 
 class OrderIdentify:

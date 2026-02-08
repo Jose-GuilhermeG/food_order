@@ -47,7 +47,10 @@ class PositiveNumberValidate:
 
 class EnumValidate:
     @staticmethod
-    def validate(value : str , enum : Enum) -> str:
+    def validate(value : str | Enum , enum : Enum) -> str:
+        if isinstance(value , Enum):
+            return value.value
+
         normalized = value.strip().capitalize()
         valid_values = [status.value for status in enum] #type: ignore[attr-defined]
         if normalized not in valid_values:

@@ -1,6 +1,8 @@
 from fastapi import Request
 from pydantic import BaseModel, Field, computed_field
 
+from api.domain.enums import OrderStatus
+
 
 class BaseSchema(BaseModel):
     @classmethod
@@ -42,6 +44,7 @@ class BaseSchemaLink(BaseSchema):
             instance.url = request.url_for(cls.view_name , **{cls.lookup_field : lookup_value})
         return instance
 
+
 class FoodPhotoSerializer(BaseSchema):
     photo_url : str
 
@@ -61,8 +64,6 @@ class FoodListSerializer(FoodSerializer):
     def photo_url(self) -> str:
         return self.photos[0].photo_url
 
-
-
 class CategoryListSerializer(BaseSchemaLink):
     name : str
     slug : str
@@ -73,3 +74,21 @@ class CategoryDetailSerializer(BaseSchema):
     slug : str
     image : str
     foods : list[FoodListSerializer]
+
+class OrderDetailSerializer(BaseSchema):
+    food_id : int
+    quantity : int
+    status : OrderStatus
+
+class OrderIdentifyCodeSerializer(BaseSchema):
+    code : int
+
+class OrderIdentifySerializer(BaseSchema):
+    client_name : str
+    orders : list[OrderDetailSerializer]
+
+class OrderIdentifyDetailSerializer(OrderIdentifySerializer , OrderIdentifyCodeSerializer):
+    pass
+
+class RegisterOrderIdentifySerializer(OrderIdentifySerializer):
+    pass

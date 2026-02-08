@@ -2,17 +2,30 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from api.adapters.dependencies.db import SessionDep
-from api.adapters.factories import CategoryFactory, FoodFactory, FoodPhotoFactory
+from api.adapters.dependencies.db import OrderQueueDep, SessionDep
+from api.adapters.factories import (
+    CategoryFactory,
+    FoodFactory,
+    FoodPhotoFactory,
+    OrderIdentifyFactory,
+)
 from api.adapters.mapping import CategoryMapping, FoodMapping, FoodPhotoMapping
-from api.adapters.repository import CategoryRepositoryDb, FoodRepositoryDb
+from api.adapters.repository import (
+    CategoryRepositoryDb,
+    FoodRepositoryDb,
+    OrderIdentifyRepository,
+)
 from api.application.interfaces.factories import (
     ICategoryFactory,
     IFactory,
     IFoodFactory,
 )
 from api.application.interfaces.mapping import IMapping
-from api.application.interfaces.repositories import ICategoryRepository, IFoodRepository
+from api.application.interfaces.repositories import (
+    ICategoryRepository,
+    IFoodRepository,
+    IOrderIdentifyRepository,
+)
 
 
 def get_food_photo_factory()->IFactory:
@@ -54,3 +67,13 @@ def get_category_repository(category_mapping : CategoryMappingDep , session : Se
     return CategoryRepositoryDb(category_mapping,session)
 
 CategoryRepositoryDep = Annotated[ICategoryRepository , Depends(get_category_repository)]
+
+def get_order_identify_facotry()->IFactory:
+    return OrderIdentifyFactory()
+
+OrderIdentifyFactoryDep = Annotated[IFactory , Depends(get_order_identify_facotry)]
+
+def get_order_identify_repository(order_queue : OrderQueueDep) -> IOrderIdentifyRepository:
+    return OrderIdentifyRepository(order_queue)
+
+OrderIdentifyRepositoryDep = Annotated[IOrderIdentifyRepository , Depends(get_order_identify_repository)]
