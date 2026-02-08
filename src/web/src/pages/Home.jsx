@@ -81,7 +81,7 @@ export default function Home() {
       })
      })
     const postdata = {
-      "client_name" : "Guilherme",
+      "client_name" : clientName,
       "orders" : orders_post_data
     }
     try{

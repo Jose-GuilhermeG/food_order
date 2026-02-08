@@ -94,3 +94,11 @@ class IOrderIdentifyRepository(
     @abstractmethod
     def get_last(self)->OrderIdentify:
         pass
+
+    @abstractmethod
+    def set_current_order_as_ready(self)->None:
+        pass
+
+    @abstractmethod
+    def get_last_ready(self)->OrderIdentify:
+        pass

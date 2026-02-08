@@ -31,3 +31,17 @@ class ShowCurrentOrderUseCase:
 
     def execute(self)->OrderIdentify:
         return self.repository.get_last()
+
+class SetCurrentOrderAsReady:
+    def __init__(self , repository : IOrderIdentifyRepository):
+        self.repository = repository
+
+    def execute(self)->None:
+        return self.repository.set_current_order_as_ready()
+
+class ShowLastReadyOrder:
+    def __init__(self , repository : IOrderIdentifyRepository):
+        self.repository = repository
+
+    def execute(self)->OrderIdentify:
+        return self.repository.get_last_ready()

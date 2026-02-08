@@ -31,7 +31,10 @@ export default function FoodDetail({ state , add_envent ,set_state , food , ...p
                 <p className="text-white text-left mx-5 p-5 text-wrap max-w-full whitespace-normal wrap-break-word">
                     {food.description}
                 </p>
-                <AddCartButton style={{width : '90%' , left : '5%' , margin : '10% 0 0 0'}} on_click={()=>add_envent(data_food)} />
+                <AddCartButton style={{width : '90%' , left : '5%' , margin : '10% 0 0 0'}} on_click={()=>{
+                    add_envent(data_food)
+                    set_state(false)    
+                }} />
             </div>
         </BaseModal>
     )

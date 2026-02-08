@@ -1,11 +1,36 @@
 import { useState , useEffect } from "react"
 import { Check , Timer } from "lucide-react"
+import { get_ready_order } from "../services/order_services"
 
 export default function PublicView(){
 
-    const [currentOrder , setCurrentOrder] = useState({code : 10 , client_name : "Guilherme" })
-    const [readyOrders , setReadyOrders ] = useState([])
+    const [currentOrder , setCurrentOrder] = useState()
     const [inPreparation , setInPreparation] = useState([])
+
+    
+    useEffect(()=>{
+        const ws = get_ready_order()
+        ws.onmessage = ((event)=>{
+            setCurrentOrder(JSON.parse(event.data))
+        })
+        console.log(currentOrder)
+
+        return ()=>{
+            ws.close()
+        }
+
+    },[currentOrder])
+
+    if (!currentOrder){
+        return (
+            <div className="w-screen h-screen bg-black-gradient flex flex-col justify-center items-center">
+                <h1 className="text-6xl text-white font-black text-center my-15">
+                    Aguardando algum Pedido ficar Pronto
+                    <Timer className="inline w-16 h-16 mx-2 " />
+                </h1>
+            </div>
+        )
+    }
 
     return (
         <div className="w-screen h-screen bg-black-gradient flex flex-col justify-center items-center">

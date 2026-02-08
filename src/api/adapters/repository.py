@@ -144,3 +144,9 @@ class OrderIdentifyRepository(
 
     def create_group(self, list_entitie):
         return []
+
+    def set_current_order_as_ready(self):
+        return self._queue.set_current_order_ready()
+
+    def get_last_ready(self):
+        return self._queue.get_ready_order()
