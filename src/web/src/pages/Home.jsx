@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Clock, Flame, ChefHat, X, Plus, Minus } from 'lucide-react';
 import { get_food_by_category, get_food_details } from '../services/food_services';
+import { register_order } from '../services/order_services';
 
 //components
 import FoodGalary from '../features/food/FoodGalery';
@@ -13,6 +14,7 @@ import SimpleSearchInput from '../components/inputs/SearchInput';
 import BasicModal from '../components/modal/BasicModal';
 import FoodDetail from '../features/food/foodDetail';
 import { get_all_categories } from '../services/categories_service';
+import SimpleButton from '../components/button/simpleButton';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -24,6 +26,7 @@ export default function Home() {
   const [productDetail , setProductDetail] = useState()
   const [openProductDetailModal , setOpenProductDetailModal] = useState(false)
   const [categories , setCategories] = useState([])
+  const [clientName , setClientName] = useState()
 
   useEffect(() => {
     const load_products = async ()=>{
@@ -68,10 +71,26 @@ export default function Home() {
   const totalPrice = orders.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const totalItems = orders.reduce((sum, item) => sum + item.quantity, 0);
 
-   const handleCheckout = () => {
-    const number = Math.floor(1000 + Math.random() * 9000);
-    setOrderNumber(number);
-    setOrders([]);
+   const handleCheckout = async () => {
+     const orders_post_data = []
+     orders.forEach(element=>{
+      orders_post_data.push({
+        food_id : element.id,
+        quantity : element.quantity,
+        status : "Pendente"
+      })
+     })
+    const postdata = {
+      "client_name" : "Guilherme",
+      "orders" : orders_post_data
+    }
+    try{
+      const respoonse = await (await register_order(postdata)).data
+      setOrderNumber(respoonse.code)
+      setOrders([])
+    }catch(e){
+      console.log(e)
+    }
     setSideBarOpen(false)
   };
 
@@ -211,13 +230,33 @@ export default function Home() {
               Aguarde ser chamado para retirar seu pedido no balcão.
             </p>
             <button
-              onClick={() => setOrderNumber(null)}
+              onClick={() => {
+                setOrderNumber(null)
+                setClientName(null)
+              }}
               className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl font-bold transition-colors"
             >
               Fazer Novo Pedido
             </button>
         </BasicModal>
       )}
+
+     {!clientName && (<BasicModal>
+        <form onSubmit={(e)=>{
+          e.preventDefault()
+          setClientName(e.target.client_name.value)
+        }}>
+          <h1 className='text-3xl font-black text-white mb-3'>
+            Nome do Cliente
+          </h1>
+          <input type="text" name='client_name' className='w-[95%] border border-white rounded-2xl my-5 text-white px-5 py-2' required />
+          <div>
+            <SimpleButton >
+                <span>Confirmar</span>
+            </SimpleButton>
+          </div>
+        </form>
+      </BasicModal>)}
 
 
       <FloatButton style={{"right" : '5%'  , "bottom" : '5%' , "backgroundColor" : "#101828"}} on_click={()=>setSideBarOpen(true)}>
