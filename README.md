@@ -30,3 +30,51 @@ npm i
 ```bash
 npm run dev
 ```
+
+## API Install
+
+## creating virtual environment
+```bash
+python -m vitualenv env
+```
+
+## active virtual environment
+```bash
+source ./env/bin/active
+```
+
+## install dependencies
+```bash
+pip install --upgrade pip
+pip install -r ./requirements/local.txt
+```
+
+## create dot env file
+```bash
+cp ./.env-example ./.env
+```
+
+## Configure
+|var | what is it |
+----- |-------------------|
+|DATABASE_PASSWORD | your database password|
+|DATABASE_HOST | your database host|
+|DATABASE_NAME | your database name|
+|DATABASE_PORT | your database port|
+|DATABASE_ENGINE | your database engine|
+|DATABASE_USER | your database user|
+
+## Run migrations
+```bash
+alembic upgrade head   
+```
+
+## Run application
+```bash
+PYTHONPATH=./src/ #set python path if you are not in api folder
+uvicorn api.infra.main:app
+```
+
+# More
+if you want know another thing that is not here maybe it is in docs:
+- [routes](./docs/routes.md)
