@@ -1,7 +1,7 @@
 //imports
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Clock, Flame, ChefHat, X, Plus, Minus } from 'lucide-react';
-import { get_food_by_category, get_food_details } from '../services/food_services';
+import { get_food_by_category, get_food_details, search_food } from '../services/food_services';
 import { register_order } from '../services/order_services';
 
 //components
@@ -35,15 +35,21 @@ export default function Home() {
       ).catch(err=>console.log(err))
     }
 
+    const load_search_products = async()=>{
+      search_food(searchQuery).then(data=>data.data).then(
+        data=>setProducts(data)
+      )
+    }
+
     const load_categories = async ()=>{
       get_all_categories().then(data=>data.data).then(data=>{
         setCategories(data)
       }).catch(err=>console.log(err))
     }
 
-    load_products()
+    searchQuery ? load_search_products() :  load_products()
     load_categories()
-  }, [selectedCategory]);
+  }, [selectedCategory , searchQuery]);
 
 
   const addToCart = (product) => {

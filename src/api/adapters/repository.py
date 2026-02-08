@@ -100,6 +100,11 @@ class FoodRepositoryDb(
 
         return self.mapper.to_entitie(query_result)
 
+    def search(self, q , exec : bool = True):
+        query = select(self._model).where(self._model.name.ilike(f"%{q}%")) #type: ignore
+
+        return self.mapper.to_entitie(self.exec(query).all())
+
 
 class CategoryRepositoryDb(
     RepositoryDb[Category],
