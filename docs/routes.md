@@ -2,6 +2,36 @@
 This file has the docs about frontend and backend routes
 
 - [BackEnd](#api--backend)
+- [FrontEnd](#web--frontend)
+
+## Web / FrontEnd
+the web has three simple pages:
+- home
+- public
+- staff
+
+where each page has a reason to exist:
+
+## Home:
+- **path**:`/`
+- **description** : the principal page , it's responsible to allow clients get a order and receives its order number
+- **functions** : 
+```
+- show all meal in the menu to client
+- allow filter meal by category or search by name
+- the client can choose what meals its want and get the order
+- client get its order number
+```
+
+## Public:
+- **path**:`/public/`
+- **description**: the page responsible to show public infos about the orders
+- **functions**:
+```
+- show the last order that its ready
+- list all orders what are preparing
+- show all orders what are ready
+```
 
 ## APi / Backend
 
@@ -11,7 +41,7 @@ By default the fastApi gives two routes of docs :
 
 all both do have the same function : show the api routes and how it works , but if you don't want to run the application and read the completed doc here had the basic routes docs:
 
-### food:
+### Food:
 
 #### List food:
 - **GET**: `/food/`
@@ -51,10 +81,31 @@ all both do have the same function : show the api routes and how it works , but 
 }
 ```
 
+#### Search Food
+- **GET**: `/food/search/<q>/`
+- **Description**: return all foods what has the "q" value in its name
+- **Paramas**:
+  - **q** : value of query to search
+- **Response/Body**:
+```json
+  [
+    {
+      "id": 28,
+      "name": "Pizza Margherita",
+      "slug": "pizza-margherita",
+      "description": "Molho de tomate, mussarela de búfala e manjericão fresco",
+      "price": 42,
+      "photo_url": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop"
+    }
+  ]
+```
+
+### Category
+
 #### List category:
 - **GET**: `/category/` 
 - **Description**: show all categories register in the database 
-- **REsponse/Body**:
+- **Response/Body**:
 ```json
     [
         {
