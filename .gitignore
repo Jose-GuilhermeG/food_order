@@ -35,3 +35,6 @@ env
 ENV
 VENV
 .env
+
+#project
+static

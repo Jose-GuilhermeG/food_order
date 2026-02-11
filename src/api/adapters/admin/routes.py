@@ -1,11 +1,13 @@
-from fastapi import FastAPI
+from os.path import basename, join
+
+from fastapi import FastAPI, UploadFile
 from sqladmin import Admin, ModelView
 from sqladmin.filters import AllUniqueStringValuesFilter, OperationColumnFilter
+from wtforms import FileField
 
-from api.adapters.factories import FoodFactory
-from api.adapters.mapping import FoodMapping
 from api.adapters.schemas.models import CategoryModel, FoodModel, FoodPhotoModel
 from api.infra.db import engine
+from api.infra.settings import MEDIA_DIR
 
 
 def register_admin(app : FastAPI):
@@ -16,8 +18,9 @@ def register_admin(app : FastAPI):
         column_filters = [
             OperationColumnFilter(FoodModel.price)
         ]
-        column_details_list = [*column_list , FoodModel.slug ]
-        form_columns = ["name" , "description" , "price" , "photos"]
+        column_details_list = [*column_list , FoodModel.slug , FoodModel.categories ]
+        column_formatters_detail = {FoodModel.categories : lambda model , column :model.categories}
+        form_columns = ["name" , "description" , "price" , "photos" , "categories"]
         category = "Meal"
         name = "Food"
         name_plural = "Foods"
@@ -27,15 +30,10 @@ def register_admin(app : FastAPI):
         column_default_sort = [(FoodModel.name , False)]
 
         async def on_model_change(self, data, model, is_created, request):
-            factory = FoodFactory(ignore_attrs=["id"])
-            mapping = FoodMapping(factory)
-            if not is_created:
-                return mapping.to_model(factory.reconstruct(**data))
-
             slug = data.get("name").lower().replace(" " , "-")
             model.slug = slug
 
-            return model
+            data["slug"] = model.slug
 
 
     class CategoriesAdmin(ModelView , model=CategoryModel): #type: ignore
@@ -60,6 +58,21 @@ def register_admin(app : FastAPI):
         column_formatters = {FoodPhotoModel.food : lambda model , column : model.food.name }
         column_formatters_detail = {FoodPhotoModel.food : lambda model , column : model.food.name }
         column_details_exclude_list = [FoodPhotoModel.food_id]
+        form_overrides = {
+            "photo_url" : FileField
+        }
+
+        async def on_model_change(self, data, model, is_created, request):
+            photo : UploadFile = data.get("photo_url")
+            if photo:
+                filename = basename(photo.filename)
+                upload_path = join(MEDIA_DIR , filename)
+                with open(upload_path , "wb") as buffer:
+                    buffer.write(await photo.read())
+                model.photo_url = filename
+
+            data["photo_url"] = model.photo_url
+
 
     admin.add_view(FoodAdmin)
     admin.add_view(FoodPhotoAdmin)

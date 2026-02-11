@@ -2,12 +2,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from api.adapters.admin.routes import register_admin
 from api.adapters.routes import category_routes, food_routes, order_routes
 from api.domain.exceptions import IntegrityException
 from api.infra.db import create_all_tables
 from api.infra.exceptions_handler import integrity_exception_handler
+from api.infra.settings import DEBUG, MEDIA_DIR, MEDIA_PREFIX
 
 
 @asynccontextmanager
@@ -42,3 +44,12 @@ app.add_middleware(
 )
 
 register_admin(app)
+
+if DEBUG:
+    app.mount(
+        MEDIA_PREFIX,
+        StaticFiles(
+            directory=MEDIA_DIR,
+        ),
+        name="static"
+    )

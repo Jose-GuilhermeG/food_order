@@ -1,5 +1,5 @@
 from fastapi import Request
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, field_serializer
 
 from api.adapters.docs.response_examples import (
     CategoryDetailSerializerExamples,
@@ -9,6 +9,7 @@ from api.adapters.docs.response_examples import (
     OrderIdentifySerializerExamples,
 )
 from api.domain.enums import OrderStatus
+from api.infra.settings import MEDIA_ROOT
 
 
 class BaseSchema(BaseModel):
@@ -55,6 +56,10 @@ class BaseSchemaLink(BaseSchema):
 class FoodPhotoSerializer(BaseSchema):
     photo_url : str = Field(examples=["/static/example_1.com"])
 
+    @field_serializer("photo_url")
+    def add_prefix(self , value : str)->str:
+        return f"{MEDIA_ROOT}{value}"
+
 class FoodSerializer(BaseSchema):
     id : int
     name : str
@@ -75,7 +80,7 @@ class FoodListSerializer(FoodSerializer):
     @computed_field #type: ignore
     @property
     def photo_url(self) -> str:
-        return self.photos[0].photo_url
+        return f"{MEDIA_ROOT}{self.photos[0].photo_url}"
 
     model_config = {
         "json_schema_extra" : {
