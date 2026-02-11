@@ -80,6 +80,11 @@ class OrderDetailSerializer(BaseSchema):
     quantity : int
     status : OrderStatus
 
+class OrderWithFoodSerializer(BaseSchema):
+    food : FoodListSerializer
+    quantity : int
+    status : OrderStatus
+
 class OrderIdentifyCodeSerializer(BaseSchema):
     code : int
 
@@ -92,3 +97,6 @@ class OrderIdentifyDetailSerializer(OrderIdentifySerializer , OrderIdentifyCodeS
 
 class RegisterOrderIdentifySerializer(OrderIdentifySerializer):
     pass
+
+class OrderIdentifyFoodSerializer(OrderIdentifyCodeSerializer , OrderIdentifySerializer):
+    orders : list[OrderWithFoodSerializer] #type: ignore

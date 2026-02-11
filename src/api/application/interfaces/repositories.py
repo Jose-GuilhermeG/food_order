@@ -76,6 +76,9 @@ class IFoodRepository(
     def search(self , q : str)-> list[Food]:
         pass
 
+    @abstractmethod
+    def get_by_id_in_list(self, id_list : list[int]):
+        pass
 
 class ICategoryRepository(
     IRepository[Category]
@@ -105,4 +108,8 @@ class IOrderIdentifyRepository(
 
     @abstractmethod
     def get_last_ready(self)->OrderIdentify:
+        pass
+
+    @abstractmethod
+    def get_all(self)->list[OrderIdentify]:
         pass

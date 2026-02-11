@@ -1,6 +1,9 @@
 from api.application.interfaces.factories import IOrderIdentifyFactory
-from api.application.interfaces.repositories import IOrderIdentifyRepository
-from api.domain.entities import Order, OrderIdentify
+from api.application.interfaces.repositories import (
+    IFoodRepository,
+    IOrderIdentifyRepository,
+)
+from api.domain.entities import Food, Order, OrderIdentify
 
 
 class RegisterOrdersUseCase:
@@ -45,3 +48,29 @@ class ShowLastReadyOrder:
 
     def execute(self)->OrderIdentify:
         return self.repository.get_last_ready()
+
+class ShowAllOrdersUseCase:
+    def __init__(self , repository : IOrderIdentifyRepository , food_repository : IFoodRepository):
+        self.repository = repository
+        self.food_repository = food_repository
+
+    def execute(self)->list[OrderIdentify]:
+        orders = self.repository.get_all()
+        food_ids = self.get_food_ids(orders)
+        foods = self.food_repository.get_by_id_in_list(food_ids)
+        self.set_food_in_order(foods , orders)
+        return orders
+
+    def get_food_ids(self , orders : list[OrderIdentify]):
+        food_ids = set()
+        for orderIdentify in orders:
+            for order in orderIdentify.orders:
+                food_ids.add(order.food_id)
+        return food_ids
+
+    def set_food_in_order(self , foods : list[Food] , orders : list[OrderIdentify])->None:
+        for orderIdentify in orders:
+            for order in orderIdentify.orders:
+                order_food_id = order.food_id
+                food = [food for food in foods if food.id == order_food_id][0]
+                order.food = food

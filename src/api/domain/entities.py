@@ -169,6 +169,7 @@ class Order:
     __food_id: int
     __quantity: int
     __status: OrderStatus
+    __food : Food
 
     @property
     def order_identify(self) -> int:
@@ -185,6 +186,14 @@ class Order:
     @food_id.setter
     def food_id(self, value: int) -> None:
         self.__food_id = IdFieldValidation.validate(value)
+
+    @property
+    def food(self)->Food:
+        return self.__food
+
+    @food.setter
+    def food(self , value : Food)->None:
+        self.__food = TypeFieldValidation.validate(value , Food , "food")
 
     @property
     def quantity(self) -> int:

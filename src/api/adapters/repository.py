@@ -103,7 +103,18 @@ class FoodRepositoryDb(
     def search(self, q , exec : bool = True):
         query = select(self._model).where(self._model.name.ilike(f"%{q}%")) #type: ignore
 
-        return self.mapper.to_entitie(self.exec(query).all())
+        if exec:
+            return self.mapper.to_entitie(self.exec(query).all())
+
+        return query
+
+    def get_by_id_in_list(self, id_list , exec : bool = True):
+        query = select(self._model).where(self._model.id.in_(id_list)) #type: ignore
+
+        if exec:
+            return self.mapper.to_entitie(self.exec(query).all())
+
+        return query
 
 
 class CategoryRepositoryDb(
@@ -155,3 +166,6 @@ class OrderIdentifyRepository(
 
     def get_last_ready(self):
         return self._queue.get_ready_order()
+
+    def get_all(self):
+        return self._queue.all()
