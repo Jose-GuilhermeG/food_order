@@ -27,6 +27,6 @@ def list_categories_view(repository : CategoryRepositoryDep):
     '/{slug}/',
     response_model=CategoryDetailSerializer
 )
-def category_detail_view(slug : str , repository : CategoryRepositoryDep):
+async def category_detail_view(slug : str , repository : CategoryRepositoryDep):
     result = CategoryDetailUseCase(repository).execute(slug)
     return CategoryDetailSerializer.to_schema(result)

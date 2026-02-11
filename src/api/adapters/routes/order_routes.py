@@ -69,7 +69,8 @@ async def show_last_ready_order(repository : OrderIdentifyRepositoryDep , ws : W
     async def get_last_ready_order(queue):
         try:
             result = ShowLastReadyOrder(repository).execute()
-            await ws.send_json({"client_name" : str(result.client_name) , "code" : str(result.code) })
+            if result:
+                await ws.send_json({"client_name" : str(result.client_name) , "code" : str(result.code) })
         except WebSocketDisconnect:
             if get_last_ready_order in orderQueue._listeners:
                 orderQueue.remove_listener(get_last_ready_order)

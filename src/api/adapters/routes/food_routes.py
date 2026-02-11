@@ -25,7 +25,7 @@ def list_food_view(food_repository : FoodRepositoryDep):
     '/{slug}/',
     response_model=FoodSerializer
 )
-def detail_food_view(slug : str , food_repository : FoodRepositoryDep):
+async def detail_food_view(slug : str , food_repository : FoodRepositoryDep):
     result = FoodDetailUseCase(food_repository).execute(slug)
     return FoodSerializer.to_schema(result)
 

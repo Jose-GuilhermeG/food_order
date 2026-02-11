@@ -1,8 +1,6 @@
 //imports
-import React, { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Clock, Flame, ChefHat, X, Plus, Minus } from 'lucide-react';
-import { get_food_by_category, get_food_details, search_food } from '../services/food_services';
-import { register_order } from '../services/order_services';
+import { useState, useEffect } from 'react';
+import {ShoppingCart, Plus, Minus } from 'lucide-react';
 
 //components
 import FoodGalary from '../features/food/FoodGalery';
@@ -11,10 +9,16 @@ import CategoryGalery from '../features/catgory/CategoryGalery';
 import FloatButton from '../components/float_button/FloatButton';
 import RightSideBar from '../components/side_bar/RightSideBar';
 import SimpleSearchInput from '../components/inputs/SearchInput';
-import BasicModal from '../components/modal/BasicModal';
 import FoodDetail from '../features/food/foodDetail';
+import Loader from '../components/loader/Loader';
+import ConfirmOrderModal from '../features/modal/ConfirmOrderMoodal';
+
+//services
 import { get_all_categories } from '../services/categories_service';
-import SimpleButton from '../components/button/simpleButton';
+import { register_order } from '../services/order_services';
+import { get_food_by_category, search_food } from '../services/food_services';
+import GetClientNameModal from '../features/modal/GetClientNameModal';
+
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -27,28 +31,31 @@ export default function Home() {
   const [openProductDetailModal , setOpenProductDetailModal] = useState(false)
   const [categories , setCategories] = useState([])
   const [clientName , setClientName] = useState()
+  const [isFoodReqLoading , setIsFoodReqLoading] = useState(true)
 
   useEffect(() => {
-    const load_products = async ()=>{
-      get_food_by_category(selectedCategory).then(data=>data.data).then(
-        data => setProducts(data.foods)
-      ).catch(err=>console.log(err))
-    }
+    const load = async ()=>{
+      setIsFoodReqLoading(true)
+    try{
+      let foods = []
+      const all_categories = await get_all_categories()
+      setCategories(all_categories.data)
 
-    const load_search_products = async()=>{
-      search_food(searchQuery).then(data=>data.data).then(
-        data=>setProducts(data)
-      )
+      if (!searchQuery){
+        foods =  (await get_food_by_category(selectedCategory)).data.foods
+      }
+      
+      if(searchQuery){
+        foods = (await search_food(searchQuery)).data
+      }
+      setProducts(foods)
+      setIsFoodReqLoading(false)
     }
-
-    const load_categories = async ()=>{
-      get_all_categories().then(data=>data.data).then(data=>{
-        setCategories(data)
-      }).catch(err=>console.log(err))
+    catch(e){
+      console.log(e)
     }
-
-    searchQuery ? load_search_products() :  load_products()
-    load_categories()
+  }
+  load()
   }, [selectedCategory , searchQuery]);
 
 
@@ -100,13 +107,9 @@ export default function Home() {
     setSideBarOpen(false)
   };
 
-  const open_product_detail = async (product)=>{
-    get_food_details(product.slug).then(data=>data.data).then(
-      data=>{
-        setOpenProductDetailModal(true)
-        setProductDetail(data)
-      }
-    ).catch(err=>console.log(err))
+  const open_product_detail = (product)=>{
+    setProductDetail(product.slug)
+    setOpenProductDetailModal(true)
   }
 
 
@@ -120,8 +123,10 @@ export default function Home() {
         <div className="flex overflow-x-auto gap-3 pb-6 mb-8 scrollbar-hide">
           <CategoryGalery categories={categories} set_category={setSelectedCategory} selected_category={selectedCategory}/>
         </div>
-
-       <FoodGalary products={products} add_event={addToCart} on_click={open_product_detail} />
+      { isFoodReqLoading ? 
+        <Loader/> :
+        <FoodGalary products={products} add_event={addToCart} on_click={open_product_detail} />
+      }
       </div>
 
        <RightSideBar set_open_state={setSideBarOpen} open_state={isSideBarOpen}>
@@ -221,55 +226,24 @@ export default function Home() {
       </RightSideBar>
 
       {orderNumber && (
-        <BasicModal>
-            <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h2 className="text-3xl font-black text-white mb-3">Pedido Confirmado!</h2>
-            <p className="text-gray-400 mb-6">Seu número de pedido é:</p>
-            <div className="bg-gradient-to-r from-red-600 to-orange-500 rounded-xl p-6 mb-6">
-              <div className="text-6xl font-black text-white">#{orderNumber}</div>
-            </div>
-            <p className="text-gray-300 mb-8 font-medium">
-              Aguarde ser chamado para retirar seu pedido no balcão.
-            </p>
-            <button
-              onClick={() => {
+        <ConfirmOrderModal orderNumber={orderNumber} on_click={() => {
                 setOrderNumber(null)
                 setClientName(null)
-              }}
-              className="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl font-bold transition-colors"
-            >
-              Fazer Novo Pedido
-            </button>
-        </BasicModal>
+          }} />
       )}
 
-     {!clientName && (<BasicModal>
-        <form onSubmit={(e)=>{
-          e.preventDefault()
-          setClientName(e.target.client_name.value)
-        }}>
-          <h1 className='text-3xl font-black text-white mb-3'>
-            Nome do Cliente
-          </h1>
-          <input type="text" name='client_name' className='w-[95%] border border-white rounded-2xl my-5 text-white px-5 py-2' required />
-          <div>
-            <SimpleButton >
-                <span>Confirmar</span>
-            </SimpleButton>
-          </div>
-        </form>
-      </BasicModal>)}
+     {!clientName && <GetClientNameModal on_submit_envent={(e)=>setClientName(e.target.client_name.value)} />}
 
 
       <FloatButton style={{"right" : '5%'  , "bottom" : '5%' , "backgroundColor" : "#101828"}} on_click={()=>setSideBarOpen(true)}>
+        {orders.length > 0 && 
+          <div className='w-5 h-5 bg-orange-gradient absolute top-0 right-0 rounded-2xl animate-bounce'>
+          </div>
+        }
         <ShoppingCart className="w-6 h-6 text-white" strokeWidth={2} />
       </FloatButton>
 
-      <FoodDetail state={openProductDetailModal} food={productDetail} set_state={setOpenProductDetailModal} add_envent={addToCart} />
+        <FoodDetail state={openProductDetailModal} food_slug={productDetail} set_state={setOpenProductDetailModal} add_envent={addToCart} />
 
     </div>
   );
