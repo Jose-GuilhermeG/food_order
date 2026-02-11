@@ -1,6 +1,13 @@
 from fastapi import Request
 from pydantic import BaseModel, Field, computed_field
 
+from api.adapters.docs.response_examples import (
+    CategoryDetailSerializerExamples,
+    CategoryListSerializerExamples,
+    FoodListSerializerExamples,
+    FoodSerializerExamples,
+    OrderIdentifySerializerExamples,
+)
 from api.domain.enums import OrderStatus
 
 
@@ -46,7 +53,7 @@ class BaseSchemaLink(BaseSchema):
 
 
 class FoodPhotoSerializer(BaseSchema):
-    photo_url : str
+    photo_url : str = Field(examples=["/static/example_1.com"])
 
 class FoodSerializer(BaseSchema):
     id : int
@@ -56,6 +63,12 @@ class FoodSerializer(BaseSchema):
     price : float
     photos : list[FoodPhotoSerializer]
 
+    model_config = {
+        "json_schema_extra" : {
+            "examples" : FoodSerializerExamples #type: ignore
+        }
+    }
+
 class FoodListSerializer(FoodSerializer):
     photos : list[FoodPhotoSerializer] = Field(exclude=True)
 
@@ -64,16 +77,31 @@ class FoodListSerializer(FoodSerializer):
     def photo_url(self) -> str:
         return self.photos[0].photo_url
 
+    model_config = {
+        "json_schema_extra" : {
+            "example" : FoodListSerializerExamples #type: ignore
+        }
+    }
+
 class CategoryListSerializer(BaseSchemaLink):
     name : str
     slug : str
     image : str
 
-class CategoryDetailSerializer(BaseSchema):
-    name : str
-    slug : str
-    image : str
+    model_config = {
+        "json_schema_extra":{
+            "example" : CategoryListSerializerExamples #type: ignore
+        }
+    }
+
+class CategoryDetailSerializer(CategoryListSerializer):
     foods : list[FoodListSerializer]
+
+    model_config = {
+        "json_schema_extra":{
+            "example" : CategoryDetailSerializerExamples #type: ignore
+        }
+    }
 
 class OrderDetailSerializer(BaseSchema):
     food_id : int
@@ -91,6 +119,12 @@ class OrderIdentifyCodeSerializer(BaseSchema):
 class OrderIdentifySerializer(BaseSchema):
     client_name : str
     orders : list[OrderDetailSerializer]
+
+    model_config = {
+        "json_schema_extra" : {
+            "examples" : OrderIdentifySerializerExamples #type: ignore
+        }
+    }
 
 class OrderIdentifyDetailSerializer(OrderIdentifySerializer , OrderIdentifyCodeSerializer):
     pass
