@@ -7,7 +7,19 @@
     "dev": "vite ./src/web/",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
+  "lint-staged": { 
+      "src/**/*.{js,jsx,ts,tsx}": [ 
+        "eslint --fix",
+        "prettier --write" 
+      ] 
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -23,10 +35,12 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9.29.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "husky": "^9.1.7",
     "vite": "^7.0.0",
     "vite-plugin-qrcode": "^0.3.0"
   }

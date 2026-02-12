@@ -1,6 +1,6 @@
 //imports
 import { useState, useEffect } from 'react';
-import {ShoppingCart, Plus, Minus } from 'lucide-react';
+import {ShoppingCart, Plus, Minus, X } from 'lucide-react';
 
 //components
 import FoodGalary from '../features/food/FoodGalery';
@@ -12,12 +12,13 @@ import SimpleSearchInput from '../components/inputs/SearchInput';
 import FoodDetail from '../features/food/foodDetail';
 import Loader from '../components/loader/Loader';
 import ConfirmOrderModal from '../features/modal/ConfirmOrderMoodal';
+import GetClientNameModal from '../features/modal/GetClientNameModal';
+import ErrModal from '../features/modal/ErrModal';
 
 //services
 import { get_all_categories } from '../services/categories_service';
 import { register_order } from '../services/order_services';
 import { get_food_by_category, search_food } from '../services/food_services';
-import GetClientNameModal from '../features/modal/GetClientNameModal';
 
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
   const [categories , setCategories] = useState([])
   const [clientName , setClientName] = useState()
   const [isFoodReqLoading , setIsFoodReqLoading] = useState(true)
+  const [hasErr , setHasErr] = useState(false)
 
   useEffect(() => {
     const load = async ()=>{
@@ -52,7 +54,8 @@ export default function Home() {
       setIsFoodReqLoading(false)
     }
     catch(e){
-      console.log(e)
+      console.error(e)
+       setHasErr(true)
     }
   }
   load()
@@ -103,6 +106,7 @@ export default function Home() {
       setOrders([])
     }catch(e){
       console.log(e)
+      setHasErr(true)
     }
     setSideBarOpen(false)
   };
@@ -243,8 +247,8 @@ export default function Home() {
         <ShoppingCart className="w-6 h-6 text-white" strokeWidth={2} />
       </FloatButton>
 
-        <FoodDetail state={openProductDetailModal} food_slug={productDetail} set_state={setOpenProductDetailModal} add_envent={addToCart} />
-
+      <FoodDetail state={openProductDetailModal} food_slug={productDetail} set_state={setOpenProductDetailModal} add_envent={addToCart} />
+     {hasErr && <ErrModal/>}
     </div>
   );
 }

@@ -31,8 +31,9 @@ app.include_router(order_routes.router)
 app.add_exception_handler(IntegrityException , integrity_exception_handler)
 
 origins = [
-    "http://127.0.0.1/",
+    "http://127.0.0.1:5000/",
     "http://localhost:5000/",
+    "http://0.0.0.0:5000/"
 ]
 
 app.add_middleware(
