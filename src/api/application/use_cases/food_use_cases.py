@@ -1,5 +1,6 @@
-from api.application.interfaces.repositories import IFoodRepository
+from api.application.interfaces.repositories import ICategoryRepository, IFoodRepository
 from api.domain.entities import Food
+from api.domain.exceptions import IntegrityException
 
 
 class ListFoodUseCase:
@@ -18,8 +19,12 @@ class FoodDetailUseCase:
         return self.repository.get_by_slug(slug)
 
 class SearchFoodUseCase:
-    def __init__(self , repository : IFoodRepository):
+    def __init__(self , repository : IFoodRepository , category_repository : ICategoryRepository):
         self.repository = repository
+        self.category_repository = category_repository
 
-    def execute(self , query : str)->list[Food]:
-        return self.repository.search(query)
+    def execute(self , query : str , category_slug : str )->list[Food]:
+        if not self.category_repository.exist_by_slug(category_slug):
+            raise IntegrityException("that category does not exist")
+
+        return self.repository.search(query , category_slug)

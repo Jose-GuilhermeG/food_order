@@ -63,7 +63,7 @@ def register_admin(app : FastAPI):
         }
 
         async def on_model_change(self, data, model, is_created, request):
-            photo : UploadFile = data.get("photo_url")
+            photo : UploadFile = data.get("photo_url") #type: ignore
             if photo:
                 filename = basename(photo.filename)
                 upload_path = join(MEDIA_DIR , filename)

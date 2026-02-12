@@ -73,7 +73,7 @@ class IFoodRepository(
         pass
 
     @abstractmethod
-    def search(self , q : str)-> list[Food]:
+    def search(self , q : str , category_slug : str)-> list[Food]:
         pass
 
     @abstractmethod
@@ -85,6 +85,10 @@ class ICategoryRepository(
 ):
     @abstractmethod
     def get_by_slug(self , slug : str)-> Category:
+        pass
+
+    @abstractmethod
+    def exist_by_slug(self , slug : str)->bool:
         pass
 
 class IOrderRepository(

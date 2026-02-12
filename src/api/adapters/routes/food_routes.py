@@ -1,6 +1,8 @@
-from fastapi import APIRouter
+from typing import Annotated
 
-from api.adapters.dependencies.adpters import FoodRepositoryDep
+from fastapi import APIRouter, Path
+
+from api.adapters.dependencies.adpters import CategoryRepositoryDep, FoodRepositoryDep
 from api.adapters.schemas.schemas import FoodListSerializer, FoodSerializer
 from api.application.use_cases.food_use_cases import (
     FoodDetailUseCase,
@@ -30,9 +32,9 @@ async def detail_food_view(slug : str , food_repository : FoodRepositoryDep):
     return FoodSerializer.to_schema(result)
 
 @router.get(
-    "/search/{search}/",
+    "/search/{search}/{slug}/",
     response_model=list[FoodListSerializer]
 )
-def search_food_view(search : str , repository : FoodRepositoryDep):
-    result = SearchFoodUseCase(repository).execute(search)
+def search_food_view(search : str , slug : Annotated[str , Path()]  , repository : FoodRepositoryDep , category_repository : CategoryRepositoryDep):
+    result = SearchFoodUseCase(repository , category_repository).execute(search , slug)
     return [FoodListSerializer.to_schema(food) for food in result]

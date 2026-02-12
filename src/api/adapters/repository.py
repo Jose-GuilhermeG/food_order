@@ -4,7 +4,7 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import Session, SQLModel, delete, select
 
 from api.adapters.queue import OrderQueue
-from api.adapters.schemas.models import CategoryModel, FoodModel
+from api.adapters.schemas.models import CategoryModel, FoodCategoryModel, FoodModel
 from api.application.interfaces.repositories import (
     ICategoryRepository,
     IFoodRepository,
@@ -100,8 +100,13 @@ class FoodRepositoryDb(
 
         return self.mapper.to_entitie(query_result)
 
-    def search(self, q , exec : bool = True):
-        query = select(self._model).where(self._model.name.ilike(f"%{q}%")) #type: ignore
+    def search(self, q , category_slug ,exec : bool = True):
+        query = (
+            select(self._model)
+            .join(FoodCategoryModel, self._model.id == FoodCategoryModel.food_id)
+            .join(CategoryModel, CategoryModel.id == FoodCategoryModel.category_id)
+            .where( self._model.name.ilike(f"%{q}%"), CategoryModel.slug == category_slug ) #type: ignore
+        )
 
         if exec:
             return self.mapper.to_entitie(self.exec(query).all())
@@ -136,6 +141,10 @@ class CategoryRepositoryDb(
             raise IntegrityException("Category not found")
 
         return self.mapper.to_entitie(query_result)
+
+    def exist_by_slug(self, slug):
+        query = select(self._model).where(self._model.slug == slug)
+        return self.exec(query).first() is not None
 
 class OrderIdentifyRepository(
     IOrderIdentifyRepository

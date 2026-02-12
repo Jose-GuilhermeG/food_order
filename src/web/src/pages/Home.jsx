@@ -48,7 +48,7 @@ export default function Home() {
       }
       
       if(searchQuery){
-        foods = (await search_food(searchQuery)).data
+        foods = (await search_food(searchQuery , selectedCategory)).data
       }
       setProducts(foods)
       setIsFoodReqLoading(false)
