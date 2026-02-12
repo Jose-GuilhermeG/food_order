@@ -47,7 +47,13 @@ def register_admin(app : FastAPI):
         name_plural ="Categories"
         column_searchable_list = [CategoryModel.name]
         column_default_sort = [(CategoryModel.name , False)]
+        form_columns = ["name" , "image"]
 
+        async def on_model_change(self, data, model, is_created, request):
+            slug = data.get("name").lower().replace(" " , "-")
+            model.slug = slug
+
+            data["slug"] = model.slug
 
     class FoodPhotoAdmin(ModelView , model=FoodPhotoModel): #type: ignore
         column_list = [FoodPhotoModel.id , FoodPhotoModel.food]
