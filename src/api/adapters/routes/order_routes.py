@@ -12,7 +12,6 @@ from api.adapters.dependencies.adpters import (
 from api.adapters.factories import OrderFactory
 from api.adapters.schemas.schemas import (
     OrderIdentifyCodeSerializer,
-    OrderIdentifyDetailSerializer,
     OrderIdentifyFoodSerializer,
     RegisterOrderIdentifySerializer,
 )
@@ -29,13 +28,26 @@ router = APIRouter(
     tags=['Orders']
 )
 
-@router.get(
+@router.websocket(
     '/current-order/',
-    response_model=OrderIdentifyDetailSerializer
 )
-def show_current_order_view(repository : OrderIdentifyRepositoryDep):
-    result = ShowCurrentOrderUseCase(repository).execute()
-    return OrderIdentifyDetailSerializer.to_schema(result)
+async def show_current_order_view( ws : WebSocket , repository : OrderIdentifyRepositoryDep , orderQueue : OrderQueueDep):
+    await ws.accept()
+
+    async def show_current_order(queue):
+        result = ShowCurrentOrderUseCase(repository).execute()
+        await ws.send_json(loads(OrderIdentifyFoodSerializer.to_schema(result).model_dump_json()))
+
+    orderQueue.add_listener(show_current_order)
+
+    try:
+        await show_current_order(orderQueue)
+        while True:
+            await sleep(1)
+    except WebSocketDisconnect:
+        await ws.close()
+    finally:
+        await ws.close()
 
 @router.post(
     '/',
