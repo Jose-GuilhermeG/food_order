@@ -1,0 +1,47 @@
+networks:
+  food-order-network:
+
+services:
+  db:
+    image: postgres:16-alpine3.23
+    container_name: food-order-postgres
+    restart: always
+    env_file:
+      - ./.env-compose
+    environment:
+      POSTGRES_PASSWORD : ${DATABASE_PASSWORD}
+      POSTGRES_USER : ${DATABASE_USER}
+      POSTGRES_DB: ${DATABASE_NAME}
+    networks:
+      - food-order-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"] 
+      interval: 5s 
+      timeout: 5s 
+      retries: 5
+  api:
+    build:
+      context: .
+      dockerfile: ./compose/api/dockerfile
+    container_name: food-order-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env-compose
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - food-order-network
+    
+  web:
+    build: 
+      dockerfile: ./compose/web/dockerfile
+      context: .
+    container_name: food-order-web
+    networks:
+      - food-order-network
+    depends_on:
+      - api
+    ports:
+      - "80:80"

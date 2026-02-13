@@ -35,6 +35,7 @@ env
 ENV
 VENV
 .env
+.env-compose
 
 #project
 static
