@@ -15,7 +15,6 @@ from api.infra.settings import DEBUG, MEDIA_DIR, MEDIA_PREFIX
 @asynccontextmanager
 async def lifespan(app : FastAPI):
     create_all_tables()
-
     yield
 
 app = FastAPI(

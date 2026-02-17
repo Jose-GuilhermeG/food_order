@@ -20,6 +20,11 @@ router = APIRouter(
     response_model=list[CategoryListSerializer]
 )
 def list_categories_view(repository : CategoryRepositoryDep):
+    """
+        # List Ctegories route
+        Get all categories registrated in database
+
+    """
     result = ListCategoryUseCase(repository).execute()
     return [CategoryListSerializer.to_schema(category) for category in result]
 
@@ -28,5 +33,12 @@ def list_categories_view(repository : CategoryRepositoryDep):
     response_model=CategoryDetailSerializer
 )
 async def category_detail_view(slug : str , repository : CategoryRepositoryDep):
+    """
+        # Category detail route
+        Get category by slug
+
+        ## Args
+        - **slug** : simple str what repr the category
+    """
     result = CategoryDetailUseCase(repository).execute(slug)
     return CategoryDetailSerializer.to_schema(result)

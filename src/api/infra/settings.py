@@ -1,3 +1,4 @@
+from logging import INFO
 from os import getenv as env
 from os.path import join
 from pathlib import Path
@@ -31,3 +32,8 @@ MEDIA_ROOT = f"http://localhost:8000{MEDIA_PREFIX}"
 REDIS_HOST = env("REDIS_HOST")
 REDIS_PORT = env("REDIS_PORT")
 REDIS_PASSWORD = env("REDIS_PASSWORD")
+
+#loggin
+LOGIN_LEVEL=INFO
+LOG_FILE_NAME="system_loggin.log"
+LOG_FILE = join(BASE_DIR , LOG_FILE_NAME)

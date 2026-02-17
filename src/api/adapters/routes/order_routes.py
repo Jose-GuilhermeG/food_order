@@ -54,6 +54,17 @@ async def show_current_order_view( ws : WebSocket , repository : OrderIdentifyRe
     response_model=OrderIdentifyCodeSerializer
 )
 def register_order_view(data : RegisterOrderIdentifySerializer , repository : OrderIdentifyRepositoryDep , factory : OrderIdentifyFactoryDep)->dict[str , int]:
+    """
+        # Registre order route
+        registre an order in the queue
+
+        ## Body / Data
+        - **client_name**: name of order owner
+        - **orders** : object list with :
+            - food_id
+            - quantity
+            - status
+    """
     orderfactory = OrderFactory(['order_identify' , "food"])
     orders_data = data.model_dump().get("orders" , [])
     orders = []
@@ -69,6 +80,10 @@ def register_order_view(data : RegisterOrderIdentifySerializer , repository : Or
     status_code=status.HTTP_204_NO_CONTENT
 )
 def set_current_order_as_ready(repository : OrderIdentifyRepositoryDep ):
+    """
+        # Set current order as ready router
+        set current order of queue as ready
+    """
     SetCurrentOrderAsReady(repository).execute()
     return
 
